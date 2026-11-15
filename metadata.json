@@ -1,0 +1,6 @@
+{
+  "name": "Trình Đảo Đề Trắc Nghiệm Word",
+  "description": "Ứng dụng đảo đề trắc nghiệm từ file Word (.docx) chạy hoàn toàn trên trình duyệt, hỗ trợ nhận diện đáp án gạch chân/màu đỏ, ảnh minh họa, thẻ [CD], [KDD], [Nhom] và xuất bộ mã đề kèm bảng đáp án.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
