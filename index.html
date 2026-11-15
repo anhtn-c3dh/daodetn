@@ -248,34 +248,87 @@
                 </div>
               </div>
 
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label for="cfg-count" class="block text-xs font-medium text-slate-700 mb-1">Số lượng mã đề</label>
-                  <input
-                    id="cfg-count"
-                    type="number"
-                    min="1"
-                    max="50"
-                    value="4"
-                    class="w-full px-3 py-2 text-sm font-mono tabular-nums border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                  />
+              <div class="space-y-2.5">
+                <div class="flex items-center justify-between gap-2">
+                  <span class="block text-xs font-medium text-slate-700">Chế độ mã đề (4 số)</span>
+                  <div class="inline-flex p-0.5 bg-slate-100 rounded-lg border border-slate-200" role="tablist" aria-label="Chế độ tạo mã đề">
+                    <button
+                      id="code-mode-auto"
+                      type="button"
+                      class="px-2.5 py-1 text-[11px] font-semibold rounded-md bg-white text-slate-900 shadow-sm transition-colors whitespace-nowrap"
+                    >
+                      Tăng tự động
+                    </button>
+                    <button
+                      id="code-mode-custom"
+                      type="button"
+                      class="px-2.5 py-1 text-[11px] font-semibold rounded-md text-slate-600 hover:text-slate-900 transition-colors whitespace-nowrap"
+                    >
+                      Tự ghi mã đề
+                    </button>
+                  </div>
                 </div>
-                <div>
-                  <label for="cfg-start-code" class="block text-xs font-medium text-slate-700 mb-1">Mã đề bắt đầu</label>
-                  <input
-                    id="cfg-start-code"
-                    type="text"
-                    value="101"
-                    placeholder="VD: 101"
-                    class="w-full px-3 py-2 text-sm font-mono tabular-nums border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                  />
-                </div>
-              </div>
 
-              <!-- Preview of generated exam codes -->
-              <div class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2">
-                <span class="font-medium text-slate-700">Mã đề sẽ xuất:</span>
-                <span id="preview-codes-list" class="font-mono tabular-nums text-slate-900 ml-1">101, 102, 103, 104</span>
+                <!-- Auto 4-digit exam code inputs -->
+                <div id="code-auto-panel" class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label for="cfg-count" class="block text-xs font-medium text-slate-700 mb-1">Số lượng mã đề</label>
+                    <input
+                      id="cfg-count"
+                      type="number"
+                      min="1"
+                      max="50"
+                      value="4"
+                      class="w-full px-3 py-2 text-sm font-mono tabular-nums border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    />
+                  </div>
+                  <div>
+                    <label for="cfg-start-code" class="block text-xs font-medium text-slate-700 mb-1">Mã bắt đầu (4 số)</label>
+                    <input
+                      id="cfg-start-code"
+                      type="text"
+                      value="1001"
+                      placeholder="VD: 1001 hoặc 0101"
+                      class="w-full px-3 py-2 text-sm font-mono tabular-nums border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                    />
+                  </div>
+                </div>
+
+                <!-- Custom manual exam code input -->
+                <div id="code-custom-panel" class="hidden space-y-2">
+                  <div class="flex items-center justify-between gap-2">
+                    <label for="cfg-custom-codes" class="block text-xs font-medium text-slate-700">
+                      Danh sách mã đề tự ghi
+                    </label>
+                    <button
+                      id="btn-random-4digit-codes"
+                      type="button"
+                      class="inline-flex items-center gap-1 px-2 py-1 text-[11px] font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-md hover:bg-sky-100 transition-colors whitespace-nowrap"
+                      title="Sinh ngẫu nhiên các mã đề gồm 4 chữ số"
+                    >
+                      <i data-lucide="sparkles" class="w-3 h-3"></i>
+                      <span>Tạo 4 số ngẫu nhiên</span>
+                    </button>
+                  </div>
+                  <textarea
+                    id="cfg-custom-codes"
+                    rows="2"
+                    placeholder="VD: 1001, 1002, 2005, 3009 (cách nhau bởi dấu phẩy, khoảng trắng hoặc xuống dòng)"
+                    class="w-full px-3 py-2 text-sm font-mono tabular-nums border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                  >1001, 1002, 1003, 1004</textarea>
+                  <p class="text-[11px] text-slate-500">
+                    Nhập tự do các mã đề (khuyến nghị 4 chữ số như 0101, 1001...), phân tách bằng dấu phẩy, dấu cách hoặc xuống dòng.
+                  </p>
+                </div>
+
+                <!-- Preview of generated exam codes -->
+                <div id="preview-codes-box" class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 space-y-1">
+                  <div>
+                    <span class="font-medium text-slate-700">Mã đề sẽ xuất (<span id="preview-codes-count" class="tabular-nums">4</span> mã):</span>
+                    <span id="preview-codes-list" class="font-mono tabular-nums text-slate-900 ml-1">1001, 1002, 1003, 1004</span>
+                  </div>
+                  <p id="preview-codes-note" class="hidden text-[11px] text-amber-700"></p>
+                </div>
               </div>
 
               <!-- Numbering mode across 3 parts -->
@@ -610,6 +663,7 @@
           editingId: null,   // Currently edited question id
           editDraft: null,   // Deep clone draft while editing
           pendingDeleteId: null,
+          codeMode: 'auto',  // 'auto' | 'custom'
         };
 
         // DOM References
@@ -635,11 +689,19 @@
           cfgExamName: document.getElementById('cfg-exam-name'),
           cfgSubject: document.getElementById('cfg-subject'),
           cfgDuration: document.getElementById('cfg-duration'),
+          codeModeAuto: document.getElementById('code-mode-auto'),
+          codeModeCustom: document.getElementById('code-mode-custom'),
+          codeAutoPanel: document.getElementById('code-auto-panel'),
+          codeCustomPanel: document.getElementById('code-custom-panel'),
           cfgCount: document.getElementById('cfg-count'),
           cfgStartCode: document.getElementById('cfg-start-code'),
+          cfgCustomCodes: document.getElementById('cfg-custom-codes'),
+          btnRandom4DigitCodes: document.getElementById('btn-random-4digit-codes'),
           cfgNumberingMode: document.getElementById('cfg-numbering-mode'),
           cfgShuffleInGroup: document.getElementById('cfg-shuffle-in-group'),
+          previewCodesCount: document.getElementById('preview-codes-count'),
           previewCodesList: document.getElementById('preview-codes-list'),
+          previewCodesNote: document.getElementById('preview-codes-note'),
           summaryStats: document.getElementById('summary-stats'),
           statusAll: document.getElementById('status-all'),
           statusErrors: document.getElementById('status-errors'),
@@ -755,9 +817,46 @@
             .join(', ');
         }
 
+        function parseCustomExamCodes(rawText) {
+          const tokens = String(rawText || '')
+            .split(/[\s,;]+/)
+            .map((t) => t.trim().replace(/[\\/:*?"<>|]/g, ''))
+            .filter(Boolean);
+
+          const seen = new Set();
+          const codes = [];
+          let duplicateCount = 0;
+
+          for (const token of tokens) {
+            if (seen.has(token)) {
+              duplicateCount++;
+              continue;
+            }
+            seen.add(token);
+            codes.push(token);
+          }
+
+          const limitedCodes = codes.slice(0, 50);
+          const overflowCount = Math.max(0, codes.length - 50);
+          const nonFourDigitCodes = limitedCodes.filter((c) => !/^\d{4}$/.test(c));
+
+          return {
+            codes: limitedCodes,
+            duplicateCount,
+            overflowCount,
+            nonFourDigitCodes,
+          };
+        }
+
         function generateExamCodes() {
+          if (state.codeMode === 'custom') {
+            return parseCustomExamCodes(el.cfgCustomCodes.value).codes;
+          }
+
           const count = Math.max(1, Math.min(50, parseInt(el.cfgCount.value, 10) || 1));
-          const rawStart = (el.cfgStartCode.value || '101').trim();
+          const rawStart = (el.cfgStartCode.value || '1001')
+            .trim()
+            .replace(/[\\/:*?"<>|]/g, '');
           const codes = [];
 
           const match = rawStart.match(/^(.*?)(\d+)$/);
@@ -765,26 +864,99 @@
             const prefix = match[1];
             const numStr = match[2];
             const startNum = parseInt(numStr, 10);
-            const padLen = numStr.length;
+            const padLen = Math.max(4, numStr.length);
             for (let i = 0; i < count; i++) {
               const nextNum = String(startNum + i).padStart(padLen, '0');
               codes.push(prefix + nextNum);
             }
           } else {
-            const base = rawStart || '101';
+            const base = rawStart || '';
             for (let i = 0; i < count; i++) {
-              codes.push(count === 1 ? base : `${base}_${i + 1}`);
+              codes.push(base + String(1001 + i).padStart(4, '0'));
             }
           }
           return codes;
         }
 
+        function setCodeMode(mode) {
+          if (mode === state.codeMode) return;
+          if (mode === 'custom' && !el.cfgCustomCodes.value.trim()) {
+            el.cfgCustomCodes.value = generateExamCodes().join(', ');
+          }
+          state.codeMode = mode;
+
+          if (mode === 'auto') {
+            el.codeModeAuto.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+            el.codeModeAuto.classList.remove('text-slate-600');
+            el.codeModeCustom.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+            el.codeModeCustom.classList.add('text-slate-600');
+            el.codeAutoPanel.classList.remove('hidden');
+            el.codeCustomPanel.classList.add('hidden');
+          } else {
+            el.codeModeCustom.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+            el.codeModeCustom.classList.remove('text-slate-600');
+            el.codeModeAuto.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+            el.codeModeAuto.classList.add('text-slate-600');
+            el.codeCustomPanel.classList.remove('hidden');
+            el.codeAutoPanel.classList.add('hidden');
+          }
+          updateCodesPreview();
+        }
+
+        function fillRandomFourDigitCodes() {
+          const count = Math.max(1, Math.min(50, parseInt(el.cfgCount.value, 10) || 4));
+          const used = new Set();
+          const generated = [];
+          while (generated.length < count) {
+            const num = 100 + Math.floor(Math.random() * 9900); // 0100 - 9999
+            const code = String(num).padStart(4, '0');
+            if (!used.has(code)) {
+              used.add(code);
+              generated.push(code);
+            }
+          }
+          el.cfgCustomCodes.value = generated.join(', ');
+          updateCodesPreview();
+        }
+
         function updateCodesPreview() {
           const codes = generateExamCodes();
-          if (codes.length <= 6) {
-            el.previewCodesList.textContent = codes.join(', ');
+          el.previewCodesCount.textContent = codes.length;
+
+          if (codes.length === 0) {
+            el.previewCodesList.textContent = 'Chưa có mã đề hợp lệ';
+            el.previewCodesList.classList.remove('text-slate-900');
+            el.previewCodesList.classList.add('text-rose-600');
           } else {
-            el.previewCodesList.textContent = `${codes.slice(0, 4).join(', ')}, ... , ${codes[codes.length - 1]} (${codes.length} mã)`;
+            el.previewCodesList.classList.remove('text-rose-600');
+            el.previewCodesList.classList.add('text-slate-900');
+            if (codes.length <= 6) {
+              el.previewCodesList.textContent = codes.join(', ');
+            } else {
+              el.previewCodesList.textContent = `${codes.slice(0, 4).join(', ')}, ... , ${codes[codes.length - 1]}`;
+            }
+          }
+
+          if (state.codeMode === 'custom') {
+            const parsed = parseCustomExamCodes(el.cfgCustomCodes.value);
+            const notes = [];
+            if (parsed.duplicateCount > 0) {
+              notes.push(`Đã tự động bỏ ${parsed.duplicateCount} mã trùng lặp.`);
+            }
+            if (parsed.overflowCount > 0) {
+              notes.push(`Tối đa 50 mã/lần (đã ẩn ${parsed.overflowCount} mã cuối).`);
+            }
+            if (parsed.nonFourDigitCodes.length > 0) {
+              notes.push(`Có ${parsed.nonFourDigitCodes.length} mã không phải 4 chữ số (${parsed.nonFourDigitCodes.slice(0, 3).join(', ')}${parsed.nonFourDigitCodes.length > 3 ? '...' : ''}).`);
+            }
+            if (notes.length > 0) {
+              el.previewCodesNote.textContent = notes.join(' ');
+              el.previewCodesNote.classList.remove('hidden');
+            } else {
+              el.previewCodesNote.classList.add('hidden');
+            }
+          } else {
+            el.previewCodesNote.classList.add('hidden');
           }
         }
 
@@ -2460,14 +2632,14 @@
                         ],
                       }),
                       new Table({
-                        width: { size: 2400, type: WidthType.DXA },
+                        width: { size: 2600, type: WidthType.DXA },
                         alignment: AlignmentType.CENTER,
                         borders: singleBorderBox,
                         rows: [
                           new TableRow({
                             children: [
                               new TableCell({
-                                width: { size: 2400, type: WidthType.DXA },
+                                width: { size: 2600, type: WidthType.DXA },
                                 borders: singleBorderBox,
                                 margins: { top: 60, bottom: 60, left: 100, right: 100 },
                                 children: [
@@ -3463,6 +3635,17 @@
             await yieldToUI();
 
             const codes = generateExamCodes();
+            if (codes.length === 0) {
+              state.isExporting = false;
+              el.btnExportZip.disabled = state.questions.length === 0;
+              el.exportProgressWrap.classList.add('hidden');
+              showAlert(
+                'warning',
+                'Chưa có mã đề hợp lệ',
+                'Vui lòng nhập ít nhất 1 mã đề (VD: 1001, 1002...) trước khi trộn đề.'
+              );
+              return;
+            }
             const config = {
               school: el.cfgSchool.value.trim(),
               examName: el.cfgExamName.value.trim(),
@@ -4673,8 +4856,12 @@
           renderQuestions();
         });
 
+        el.codeModeAuto.addEventListener('click', () => setCodeMode('auto'));
+        el.codeModeCustom.addEventListener('click', () => setCodeMode('custom'));
         el.cfgCount.addEventListener('input', updateCodesPreview);
         el.cfgStartCode.addEventListener('input', updateCodesPreview);
+        el.cfgCustomCodes.addEventListener('input', updateCodesPreview);
+        el.btnRandom4DigitCodes.addEventListener('click', fillRandomFourDigitCodes);
         el.btnExportZip.addEventListener('click', handleExportZip);
         el.btnCloseAlert.addEventListener('click', hideAlert);
 
