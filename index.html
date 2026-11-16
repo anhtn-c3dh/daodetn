@@ -3,15 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Trình Đảo Đề Trắc Nghiệm Word — Chuẩn GDPT 2018 (3 Phần)</title>
+    <title>Trình Đảo Đề Word — THPT Đông Hiếu (GDPT 2018)</title>
     <meta
       name="description"
-      content="Ứng dụng đảo đề trắc nghiệm từ file Word (.docx) chuẩn cấu trúc GDPT 2018 (Phần I Nhiều lựa chọn, Phần II Đúng/Sai, Phần III Trả lời ngắn), chạy hoàn toàn trên trình duyệt."
+      content="Ứng dụng đảo đề trắc nghiệm & tự luận từ file Word (.docx) chuẩn GDPT 2018 (Phần I–IV), lưu hành nội bộ Trường THPT Đông Hiếu."
     />
-    <meta property="og:title" content="Trình Đảo Đề Trắc Nghiệm Word — Chuẩn GDPT 2018" />
+    <meta property="og:title" content="Trình Đảo Đề Word — THPT Đông Hiếu (GDPT 2018)" />
     <meta
       property="og:description"
-      content="Đảo đề trắc nghiệm Word (.docx) 3 dạng thức GDPT 2018 hoàn toàn trên trình duyệt kèm bảng đáp án DOCX & CSV."
+      content="Đảo đề Word (.docx) chuẩn GDPT 2018 (Phần I–IV) căn chỉnh A4 tối giản hoàn toàn trên trình duyệt."
     />
     <meta property="og:type" content="website" />
 
@@ -79,12 +79,15 @@
         <!-- Zone 1: Single-line Wordmark -->
         <a
           href="#top"
-          class="text-lg font-bold tracking-tight text-slate-900 whitespace-nowrap shrink-0 flex items-center gap-2.5"
+          class="whitespace-nowrap shrink-0 flex items-center gap-2.5"
         >
           <span class="w-8 h-8 rounded-lg bg-sky-700 text-white inline-flex items-center justify-center">
             <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
           </span>
-          <span>Đảo Đề Word</span>
+          <span class="leading-tight">
+            <span class="block text-base sm:text-lg font-bold tracking-tight text-slate-900">Đảo Đề Word</span>
+            <span class="block text-[11px] font-medium text-slate-500">THPT Đông Hiếu · Lưu hành nội bộ</span>
+          </span>
         </a>
 
         <!-- Zone 2: Clean single-line navigation links -->
@@ -96,7 +99,7 @@
             Cấu hình trộn
           </a>
           <a href="#preview-section" class="hover:text-slate-900 hover:underline underline-offset-4 whitespace-nowrap shrink-0">
-            Kiểm tra 3 phần
+            Kiểm tra & Chỉnh sửa
           </a>
           <a href="#syntax-guide" class="hover:text-slate-900 hover:underline underline-offset-4 whitespace-nowrap shrink-0">
             Quy chuẩn 2025
@@ -168,7 +171,7 @@
                 <i data-lucide="upload-cloud" class="w-5 h-5"></i>
               </div>
               <p class="text-sm font-medium text-slate-800">Kéo thả file .docx vào đây</p>
-              <p class="text-xs text-slate-500 mt-1">Tự động nhận diện 3 phần GDPT 2018 (xử lý tại trình duyệt)</p>
+              <p class="text-xs text-slate-500 mt-1">Tự động nhận diện Phần I–IV GDPT 2018 (xử lý tại trình duyệt)</p>
             </div>
 
             <!-- Loaded File Info -->
@@ -203,16 +206,29 @@
             <h2 class="text-base font-semibold text-slate-900 mb-4">02. Cấu hình đề thi & Trộn đề</h2>
 
             <form id="exam-config-form" class="space-y-3.5" onsubmit="return false;">
-              <div>
-                <label for="cfg-school" class="block text-xs font-medium text-slate-700 mb-1">
-                  Tên Sở GD&ĐT / Trường học
-                </label>
-                <input
-                  id="cfg-school"
-                  type="text"
-                  value="TRƯỜNG THPT NGUYỄN DU"
-                  class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
-                />
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label for="cfg-department" class="block text-xs font-medium text-slate-700 mb-1">
+                    Tên Sở GD&amp;ĐT
+                  </label>
+                  <input
+                    id="cfg-department"
+                    type="text"
+                    value="SỞ GD&ĐT NGHỆ AN"
+                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                  />
+                </div>
+                <div>
+                  <label for="cfg-school" class="block text-xs font-medium text-slate-700 mb-1">
+                    Tên Trường học
+                  </label>
+                  <input
+                    id="cfg-school"
+                    type="text"
+                    value="TRƯỜNG THPT ĐÔNG HIẾU"
+                    class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                  />
+                </div>
               </div>
 
               <div>
@@ -233,7 +249,7 @@
                   <input
                     id="cfg-subject"
                     type="text"
-                    value="TOÁN HỌC"
+                    value="TIN HỌC"
                     class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                   />
                 </div>
@@ -242,7 +258,7 @@
                   <input
                     id="cfg-duration"
                     type="text"
-                    value="90 phút"
+                    value="45 phút"
                     class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                   />
                 </div>
@@ -341,7 +357,7 @@
                   class="w-full px-3 py-2 text-xs sm:text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                 >
                   <option value="reset">Đánh số lại từ Câu 1 ở mỗi phần (Chuẩn 2025)</option>
-                  <option value="continuous">Đánh số liên tục từ Phần I đến Phần III</option>
+                  <option value="continuous">Đánh số liên tục từ Phần I đến hết</option>
                 </select>
               </div>
 
@@ -388,11 +404,11 @@
 
           <!-- 3. Syntax Guide -->
           <section id="syntax-guide" class="bg-white border border-slate-200 rounded-xl p-5">
-            <h2 class="text-sm font-semibold text-slate-900 mb-3">Quy chuẩn 3 dạng thức (GDPT 2018)</h2>
+            <h2 class="text-sm font-semibold text-slate-900 mb-3">Quy chuẩn cấu trúc đề (GDPT 2018)</h2>
             <dl class="space-y-3 text-xs text-slate-600 leading-relaxed">
               <div>
                 <dt class="font-semibold text-slate-800">Phần I — Nhiều lựa chọn (A. B. C. D.)</dt>
-                <dd>Nhận diện đáp án đúng qua dấu <span class="font-mono font-semibold text-slate-900">*</span> phía trước (VD: <span class="font-mono text-slate-900">*D</span>), <u>gạch chân</u>, hoặc <span class="text-red-600 font-medium">tô màu đỏ</span>.</dd>
+                <dd>Nhận diện đáp án đúng qua dấu <span class="font-mono font-semibold text-slate-900">*</span> phía trước (VD: <span class="font-mono text-slate-900">*D</span>), <u>gạch chân</u>, hoặc <span class="text-red-600 font-medium">tô màu đỏ</span>. Tự động xếp 1 dòng hoặc 2 dòng khi xuất.</dd>
               </div>
               <div>
                 <dt class="font-semibold text-slate-800">Phần II — Đúng / Sai (a) b) c) d))</dt>
@@ -401,6 +417,10 @@
               <div>
                 <dt class="font-semibold text-slate-800">Phần III — Trả lời ngắn</dt>
                 <dd>Ghi đáp án ngay dưới câu bằng <span class="font-mono text-slate-900">Đáp án: -1,25</span> hoặc <span class="font-mono text-slate-900">[DA: 2025]</span>. Hệ thống tự xóa dòng đáp án khi xuất đề thi.</dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-800">Phần IV — Tự luận (tùy chọn)</dt>
+                <dd>Đặt dưới tiêu đề <span class="font-mono text-slate-900">PHẦN IV. Tự luận</span>. Nếu đề không có câu tự luận nào, hệ thống tự động bỏ qua Phần IV khi xuất.</dd>
               </div>
               <div>
                 <dt class="font-semibold text-slate-800">Thẻ điều khiển</dt>
@@ -487,6 +507,13 @@
               >
                 Phần III · Trả lời ngắn (<span id="count-tab-short" class="tabular-nums">0</span>)
               </button>
+              <button
+                type="button"
+                data-section-tab="essay"
+                class="section-tab px-3 py-1.5 text-xs font-semibold rounded-lg border transition-colors whitespace-nowrap shrink-0 bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              >
+                Phần IV · Tự luận (<span id="count-tab-essay" class="tabular-nums">0</span>)
+              </button>
             </div>
           </div>
 
@@ -497,7 +524,7 @@
             </div>
             <h3 class="text-base font-semibold text-slate-900">Chưa có đề gốc được tải lên</h3>
             <p class="text-sm text-slate-500 max-w-md mt-1.5 leading-relaxed">
-              Kéo thả file Word (<span class="font-mono">.docx</span>) ở cột bên trái để bóc tách 3 phần theo cấu trúc GDPT 2018, nạp đề mẫu hoặc tự tạo câu hỏi mới ngay trên web.
+              Kéo thả file Word (<span class="font-mono">.docx</span>) ở cột bên trái để bóc tách theo cấu trúc GDPT 2018 (hỗ trợ tối đa Phần I–IV), nạp đề mẫu hoặc tự tạo câu hỏi mới ngay trên web.
             </p>
             <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
               <button
@@ -517,7 +544,7 @@
                 <span>Tải file Word mẫu</span>
               </button>
             </div>
-            <div class="mt-6 pt-5 border-t border-slate-200 w-full max-w-lg">
+            <div class="mt-6 pt-5 border-t border-slate-200 w-full max-w-xl">
               <p class="text-xs font-medium text-slate-500 mb-2.5">Hoặc tự soạn câu hỏi mới trực tiếp:</p>
               <div class="flex flex-wrap items-center justify-center gap-2">
                 <button
@@ -546,6 +573,15 @@
                 >
                   <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                   <span>+ Thêm câu Phần III</span>
+                </button>
+                <button
+                  type="button"
+                  data-action="add-new-question"
+                  data-type="essay"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-lg hover:bg-slate-200 transition-colors whitespace-nowrap"
+                >
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>+ Thêm câu Phần IV (Tự luận)</span>
                 </button>
               </div>
             </div>
@@ -611,8 +647,10 @@
     <!-- Quiet Footer -->
     <footer class="border-t border-slate-200 bg-white mt-10">
       <div class="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">
-        <span>Trình Đảo Đề Trắc Nghiệm Word (GDPT 2018) — Xử lý hoàn toàn trên trình duyệt, bảo mật tuyệt đối đề gốc.</span>
-        <span>Xuất chuẩn A4 Times New Roman 12pt · Bảng đáp án 3 phần DOCX & CSV UTF-8 BOM</span>
+        <span class="text-slate-700">
+          Bản quyền thuộc về <strong class="font-semibold text-slate-900">Trương Ngọc Anh</strong> — <strong class="font-semibold text-slate-900">Trường THPT Đông Hiếu</strong> · Ứng dụng tạo ra để lưu hành nội bộ.
+        </span>
+        <span>Xử lý 100% trên trình duyệt · Xuất A4 tối giản (Times New Roman) · Bảng đáp án DOCX & CSV</span>
       </div>
     </footer>
 
@@ -645,6 +683,12 @@
             title: 'PHẦN III. Câu trắc nghiệm trả lời ngắn.',
             instruction: 'Thí sinh trả lời từ câu {start} đến câu {end}.',
             shortLabel: 'Phần III · Trả lời ngắn',
+          },
+          essay: {
+            partNum: 4,
+            title: 'PHẦN IV. Câu hỏi tự luận.',
+            instruction: 'Thí sinh trả lời từ câu {start} đến câu {end}.',
+            shortLabel: 'Phần IV · Tự luận',
           },
         };
 
@@ -685,6 +729,7 @@
           exportProgressLabel: document.getElementById('export-progress-label'),
           exportProgressPct: document.getElementById('export-progress-pct'),
           exportProgressBar: document.getElementById('export-progress-bar'),
+          cfgDepartment: document.getElementById('cfg-department'),
           cfgSchool: document.getElementById('cfg-school'),
           cfgExamName: document.getElementById('cfg-exam-name'),
           cfgSubject: document.getElementById('cfg-subject'),
@@ -710,6 +755,7 @@
           countTabMcq: document.getElementById('count-tab-mcq'),
           countTabTf: document.getElementById('count-tab-tf'),
           countTabShort: document.getElementById('count-tab-short'),
+          countTabEssay: document.getElementById('count-tab-essay'),
           emptyState: document.getElementById('empty-state'),
           filteredEmptyState: document.getElementById('filtered-empty-state'),
           filteredEmptyTitle: document.getElementById('filtered-empty-title'),
@@ -1882,13 +1928,16 @@
         }
 
         function detectSectionHeader(trimmedText) {
-          // Match "PHẦN I...", "PHẦN II...", "PHẦN III..." (or PHẦN 1/2/3)
-          const m = trimmedText.match(/^PHẦN\s+(III|II|I|3|2|1)\b/i);
-          if (!m) return null;
-          const token = m[1].toUpperCase();
-          if (token === 'I' || token === '1') return 1;
-          if (token === 'II' || token === '2') return 2;
-          if (token === 'III' || token === '3') return 3;
+          // Match "PHẦN I...", "PHẦN II...", "PHẦN III...", "PHẦN IV..." (or PHẦN 1/2/3/4) or "TỰ LUẬN"
+          const m = trimmedText.match(/^PHẦN\s+(IV|III|II|I|4|3|2|1)\b/i);
+          if (m) {
+            const token = m[1].toUpperCase();
+            if (token === 'I' || token === '1') return 1;
+            if (token === 'II' || token === '2') return 2;
+            if (token === 'III' || token === '3') return 3;
+            if (token === 'IV' || token === '4') return 4;
+          }
+          if (/^TỰ\s+LUẬN\s*[:.]?$/i.test(trimmedText)) return 4;
           return null;
         }
 
@@ -2013,12 +2062,19 @@
               };
             });
 
-            // Extract short answer from stem (and check if any trailing text had DA)
+            // Extract short answer / optional essay guide from stem
             const shortRes = extractShortAnswerFromStem(currentQuestion.stem);
             const hasExplicitShortAnswer = Boolean(shortRes.shortAnswer);
 
-            // Classify Question into Type 1 (mcq), Type 2 (tf), or Type 3 (short)
-            if (currentQuestion.statements.length > 0) {
+            // Classify Question into Type 1 (mcq), Type 2 (tf), Type 3 (short), or Type 4 (essay)
+            if (currentQuestion.sectionHint === 4) {
+              currentQuestion.type = 'essay';
+              currentQuestion.section = 4;
+              currentQuestion.stem = shortRes.cleanedStem;
+              currentQuestion.shortAnswer = shortRes.shortAnswer;
+              currentQuestion.options = [];
+              currentQuestion.statements = [];
+            } else if (currentQuestion.statements.length > 0) {
               currentQuestion.type = 'tf';
               currentQuestion.section = 2;
             } else if (currentQuestion.options.length > 0) {
@@ -2129,15 +2185,16 @@
                 /\[\/?Nhom\]/gi
               );
 
-              // Check if inline MCQ options or TF statements appear on the same line as Câu X:
-              const mcqSplit = splitMcqOptions(strippedSub.text, strippedSub.charStyles);
-              const tfSplit = !mcqSplit ? splitTrueFalseStatements(strippedSub.text, strippedSub.charStyles) : null;
+              // Check if inline MCQ options or TF statements appear on the same line as Câu X (skip splitting for Section IV Essay):
+              const allowSplitInline = currentSectionHint !== 4;
+              const mcqSplit = allowSplitInline ? splitMcqOptions(strippedSub.text, strippedSub.charStyles) : null;
+              const tfSplit = allowSplitInline && !mcqSplit ? splitTrueFalseStatements(strippedSub.text, strippedSub.charStyles) : null;
 
               currentQuestion = {
                 id: makeUid(),
                 originalNumber,
                 sectionHint: currentSectionHint,
-                type: 'mcq',
+                type: currentSectionHint === 4 ? 'essay' : 'mcq',
                 section: currentSectionHint || 1,
                 stem: mcqSplit ? mcqSplit.stemPrefix : tfSplit ? tfSplit.stemPrefix : remainder,
                 stemImages: [...para.images],
@@ -2186,15 +2243,16 @@
               continue;
             }
 
-            // 3. Inside an active question -> check TF statements a..d OR MCQ options A..D
+            // 3. Inside an active question -> check TF statements a..d OR MCQ options A..D (skip for Essay)
             if (currentQuestion) {
               const strippedLine = stripPatternWithStyles(para.fullText, para.charStyles, /\[\/?Nhom\]/gi);
+              const allowSplitLine = currentQuestion.sectionHint !== 4;
               const tfSplit =
-                currentQuestion.options.length === 0
+                allowSplitLine && currentQuestion.options.length === 0
                   ? splitTrueFalseStatements(strippedLine.text, strippedLine.charStyles)
                   : null;
               const mcqSplit =
-                !tfSplit && currentQuestion.statements.length === 0
+                allowSplitLine && !tfSplit && currentQuestion.statements.length === 0
                   ? splitMcqOptions(strippedLine.text, strippedLine.charStyles)
                   : null;
 
@@ -2454,10 +2512,12 @@
           const mcqList = questions.filter((q) => q.type === 'mcq');
           const tfList = questions.filter((q) => q.type === 'tf');
           const shortList = questions.filter((q) => q.type === 'short');
+          const essayList = questions.filter((q) => q.type === 'essay');
 
           const shuffledMcq = shuffleSectionList(mcqList, config.shuffleInGroup);
           const shuffledTf = shuffleSectionList(tfList, config.shuffleInGroup);
           const shuffledShort = shuffleSectionList(shortList, config.shuffleInGroup);
+          const shuffledEssay = shuffleSectionList(essayList, config.shuffleInGroup);
 
           const resetPerSection = config.numberingMode !== 'continuous';
           let globalNum = 1;
@@ -2472,16 +2532,18 @@
             mcq: assignNumbers(shuffledMcq),
             tf: assignNumbers(shuffledTf),
             short: assignNumbers(shuffledShort),
-            totalQuestions: shuffledMcq.length + shuffledTf.length + shuffledShort.length,
+            essay: assignNumbers(shuffledEssay),
+            totalQuestions:
+              shuffledMcq.length + shuffledTf.length + shuffledShort.length + shuffledEssay.length,
           };
         }
 
         // =========================================================================
         // 6. WORD (.DOCX) & 3-PART ANSWER KEY EXPORTER
         // =========================================================================
-        function fitImageDimensions(width, height, maxW = 400, maxH = 240) {
-          let w = width || 300;
-          let h = height || 180;
+        function fitImageDimensions(width, height, maxW = 340, maxH = 180) {
+          let w = width || 280;
+          let h = height || 160;
           if (w > maxW) {
             h = Math.round((h * maxW) / w);
             w = maxW;
@@ -2502,7 +2564,7 @@
               new window.docx.TextRun({
                 text: line,
                 font: 'Times New Roman',
-                size: 24,
+                size: 22,
                 ...style,
               })
             );
@@ -2551,40 +2613,42 @@
               new TableRow({
                 children: [
                   new TableCell({
-                    width: { size: 54, type: WidthType.PERCENTAGE },
+                    width: { size: 48, type: WidthType.PERCENTAGE },
                     borders: noBorders,
+                    margins: { top: 0, bottom: 0, left: 0, right: 40 },
                     children: [
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
-                        spacing: { after: 40 },
+                        spacing: { before: 0, after: 10, line: 240 },
                         children: [
                           new TextRun({
-                            text: (config.school || 'TRƯỜNG THPT').toUpperCase(),
+                            text: (config.department || 'SỞ GD&ĐT NGHỆ AN').toUpperCase(),
                             font: 'Times New Roman',
-                            size: 22,
+                            size: 21,
+                            bold: false,
+                          }),
+                        ],
+                      }),
+                      new Paragraph({
+                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 0, after: 10, line: 240 },
+                        children: [
+                          new TextRun({
+                            text: (config.school || 'TRƯỜNG THPT ĐÔNG HIẾU').toUpperCase(),
+                            font: 'Times New Roman',
+                            size: 21,
                             bold: true,
                           }),
                         ],
                       }),
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
-                        spacing: { after: 40 },
-                        children: [
-                          new TextRun({
-                            text: 'ĐỀ CHÍNH THỨC',
-                            font: 'Times New Roman',
-                            size: 22,
-                            bold: true,
-                          }),
-                        ],
-                      }),
-                      new Paragraph({
-                        alignment: AlignmentType.CENTER,
+                        spacing: { before: 0, after: 0, line: 240 },
                         children: [
                           new TextRun({
                             text: `(Đề thi gồm ${variantSections.totalQuestions} câu hỏi)`,
                             font: 'Times New Roman',
-                            size: 20,
+                            size: 19,
                             italics: true,
                           }),
                         ],
@@ -2592,64 +2656,54 @@
                     ],
                   }),
                   new TableCell({
-                    width: { size: 46, type: WidthType.PERCENTAGE },
+                    width: { size: 52, type: WidthType.PERCENTAGE },
                     borders: noBorders,
+                    margins: { top: 0, bottom: 0, left: 40, right: 0 },
                     children: [
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
-                        spacing: { after: 40 },
+                        spacing: { before: 0, after: 10, line: 240 },
                         children: [
                           new TextRun({
                             text: (config.examName || 'ĐỀ KIỂM TRA').toUpperCase(),
                             font: 'Times New Roman',
-                            size: 22,
+                            size: 21,
                             bold: true,
                           }),
                         ],
                       }),
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
-                        spacing: { after: 40 },
+                        spacing: { before: 0, after: 30, line: 240 },
                         children: [
                           new TextRun({
-                            text: `Môn: ${config.subject || 'Trắc nghiệm'}`,
-                            font: 'Times New Roman',
-                            size: 22,
-                            bold: true,
-                          }),
-                        ],
-                      }),
-                      new Paragraph({
-                        alignment: AlignmentType.CENTER,
-                        spacing: { after: 80 },
-                        children: [
-                          new TextRun({
-                            text: `Thời gian làm bài: ${config.duration || '90 phút'}`,
+                            text: `Môn: ${config.subject || 'Tin học'}   —   Thời gian: ${config.duration || '45 phút'}`,
                             font: 'Times New Roman',
                             size: 20,
-                            italics: true,
+                            bold: true,
                           }),
                         ],
                       }),
                       new Table({
-                        width: { size: 2600, type: WidthType.DXA },
+                        width: { size: 2400, type: WidthType.DXA },
                         alignment: AlignmentType.CENTER,
                         borders: singleBorderBox,
                         rows: [
                           new TableRow({
                             children: [
                               new TableCell({
-                                width: { size: 2600, type: WidthType.DXA },
+                                width: { size: 2400, type: WidthType.DXA },
                                 borders: singleBorderBox,
-                                margins: { top: 60, bottom: 60, left: 100, right: 100 },
+                                margins: { top: 25, bottom: 25, left: 60, right: 60 },
                                 children: [
                                   new Paragraph({
                                     alignment: AlignmentType.CENTER,
+                                    spacing: { before: 0, after: 0, line: 240 },
                                     children: [
                                       new TextRun({
                                         text: `Mã đề: ${examCode}`,
                                         font: 'Times New Roman',
-                                        size: 24,
+                                        size: 22,
                                         bold: true,
                                       }),
                                     ],
@@ -2668,15 +2722,15 @@
           });
 
           const studentInfoParagraph = new Paragraph({
-            spacing: { before: 160, after: 180 },
+            spacing: { before: 40, after: 60, line: 240 },
             border: {
-              bottom: { style: BorderStyle.SINGLE, size: 6, color: '000000', space: 6 },
+              bottom: { style: BorderStyle.SINGLE, size: 6, color: '000000', space: 3 },
             },
             children: [
               new TextRun({
-                text: 'Họ và tên thí sinh: ........................................................................   Số báo danh: .......................',
+                text: 'Họ và tên: ........................................................................   Lớp: ...............   SBD: ...............',
                 font: 'Times New Roman',
-                size: 24,
+                size: 22,
               }),
             ],
           });
@@ -2693,17 +2747,17 @@
                   if (introP.text) {
                     children.push(
                       new Paragraph({
-                        spacing: { before: 100, after: 60 },
+                        spacing: { before: 35, after: 15, line: 240 },
                         children: makeTextRunsFromMultiline(introP.text, { italics: true }),
                       })
                     );
                   }
                   for (const img of introP.images || []) {
-                    const dim = fitImageDimensions(img.width, img.height);
+                    const dim = fitImageDimensions(img.width, img.height, 340, 170);
                     children.push(
                       new Paragraph({
                         alignment: AlignmentType.CENTER,
-                        spacing: { before: 40, after: 60 },
+                        spacing: { before: 15, after: 20, line: 240 },
                         children: [new ImageRun({ data: img.bytes, transformation: dim })],
                       })
                     );
@@ -2716,12 +2770,12 @@
           const appendStemAndImages = (q) => {
             children.push(
               new Paragraph({
-                spacing: { before: 120, after: 60 },
+                spacing: { before: 45, after: 15, line: 240 },
                 children: [
                   new TextRun({
                     text: `Câu ${q.exportNumber}: `,
                     font: 'Times New Roman',
-                    size: 24,
+                    size: 22,
                     bold: true,
                   }),
                   ...makeTextRunsFromMultiline(q.stem),
@@ -2729,11 +2783,11 @@
               })
             );
             for (const img of q.stemImages || []) {
-              const dim = fitImageDimensions(img.width, img.height);
+              const dim = fitImageDimensions(img.width, img.height, 340, 175);
               children.push(
                 new Paragraph({
                   alignment: AlignmentType.CENTER,
-                  spacing: { before: 40, after: 60 },
+                  spacing: { before: 15, after: 20, line: 240 },
                   children: [new ImageRun({ data: img.bytes, transformation: dim })],
                 })
               );
@@ -2746,16 +2800,16 @@
             const lastN = variantSections.mcq[variantSections.mcq.length - 1].exportNumber;
             children.push(
               new Paragraph({
-                spacing: { before: 140, after: 40 },
-                children: [new TextRun({ text: SECTION_META.mcq.title, font: 'Times New Roman', size: 24, bold: true })],
+                spacing: { before: 65, after: 15, line: 240 },
+                children: [new TextRun({ text: SECTION_META.mcq.title, font: 'Times New Roman', size: 22, bold: true })],
               }),
               new Paragraph({
-                spacing: { after: 80 },
+                spacing: { before: 0, after: 30, line: 240 },
                 children: [
                   new TextRun({
                     text: SECTION_META.mcq.instruction.replace('{start}', firstN).replace('{end}', lastN),
                     font: 'Times New Roman',
-                    size: 22,
+                    size: 20,
                     italics: true,
                   }),
                 ],
@@ -2766,28 +2820,46 @@
               appendGroupIntroIfNeeded(q);
               appendStemAndImages(q);
 
-              const canUse2x2Grid =
+              const allPlainSingleLine =
                 q.options.length === 4 &&
                 q.options.every(
                   (o) =>
                     (!o.images || o.images.length === 0) &&
-                    (o.text || '').length < 25 &&
                     !(o.text || '').includes('\n')
                 );
 
-              if (canUse2x2Grid) {
-                const makeOptCell = (idx) => {
+              const optLens = allPlainSingleLine ? q.options.map((o) => (o.text || '').trim().length) : [];
+              const maxOptLen = optLens.length ? Math.max(...optLens) : 999;
+              const totalOptLen = optLens.length ? optLens.reduce((a, b) => a + b, 0) : 999;
+
+              // Case 1: Fit all 4 options on 1 single line (1x4 borderless table)
+              const canUse1x4Row = allPlainSingleLine && maxOptLen <= 22 && totalOptLen <= 68;
+              // Case 2: Fit 4 options on 2 lines (2x2 borderless table)
+              const canUse2x2Grid = !canUse1x4Row && allPlainSingleLine && maxOptLen <= 44;
+
+              if (canUse1x4Row) {
+                let colWidths = [25, 25, 25, 25];
+                if (maxOptLen > 14) {
+                  const weights = optLens.map((l) => l + 6);
+                  const wSum = weights.reduce((a, b) => a + b, 0);
+                  colWidths = weights.map((w) => Math.max(16, Math.round((w / wSum) * 100)));
+                  const diff = 100 - colWidths.reduce((a, b) => a + b, 0);
+                  colWidths[0] += diff;
+                }
+
+                const make1x4Cell = (idx) => {
                   const label = LETTERS_UPPER[idx];
                   const txt = q.options[idx] ? q.options[idx].text : '';
                   return new TableCell({
-                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    width: { size: colWidths[idx], type: WidthType.PERCENTAGE },
                     borders: noBorders,
-                    margins: { top: 20, bottom: 20, left: 40, right: 60 },
+                    margins: { top: 5, bottom: 10, left: idx === 0 ? 120 : 20, right: 30 },
                     children: [
                       new Paragraph({
+                        spacing: { before: 0, after: 0, line: 240 },
                         children: [
-                          new TextRun({ text: `${label}. `, font: 'Times New Roman', size: 24, bold: true }),
-                          new TextRun({ text: txt, font: 'Times New Roman', size: 24 }),
+                          new TextRun({ text: `${label}. `, font: 'Times New Roman', size: 22, bold: true }),
+                          new TextRun({ text: txt, font: 'Times New Roman', size: 22 }),
                         ],
                       }),
                     ],
@@ -2799,8 +2871,39 @@
                     width: { size: 100, type: WidthType.PERCENTAGE },
                     borders: noBorders,
                     rows: [
-                      new TableRow({ children: [makeOptCell(0), makeOptCell(1)] }),
-                      new TableRow({ children: [makeOptCell(2), makeOptCell(3)] }),
+                      new TableRow({
+                        children: [make1x4Cell(0), make1x4Cell(1), make1x4Cell(2), make1x4Cell(3)],
+                      }),
+                    ],
+                  })
+                );
+              } else if (canUse2x2Grid) {
+                const makeOptCell = (idx, isLeft) => {
+                  const label = LETTERS_UPPER[idx];
+                  const txt = q.options[idx] ? q.options[idx].text : '';
+                  return new TableCell({
+                    width: { size: 50, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    margins: { top: 5, bottom: 10, left: isLeft ? 120 : 30, right: 30 },
+                    children: [
+                      new Paragraph({
+                        spacing: { before: 0, after: 0, line: 240 },
+                        children: [
+                          new TextRun({ text: `${label}. `, font: 'Times New Roman', size: 22, bold: true }),
+                          new TextRun({ text: txt, font: 'Times New Roman', size: 22 }),
+                        ],
+                      }),
+                    ],
+                  });
+                };
+
+                children.push(
+                  new Table({
+                    width: { size: 100, type: WidthType.PERCENTAGE },
+                    borders: noBorders,
+                    rows: [
+                      new TableRow({ children: [makeOptCell(0, true), makeOptCell(1, false)] }),
+                      new TableRow({ children: [makeOptCell(2, true), makeOptCell(3, false)] }),
                     ],
                   })
                 );
@@ -2809,20 +2912,20 @@
                   const label = LETTERS_UPPER[idx] || String.fromCharCode(65 + idx);
                   children.push(
                     new Paragraph({
-                      spacing: { before: 20, after: 20 },
-                      indent: { left: 240 },
+                      spacing: { before: 0, after: 10, line: 240 },
+                      indent: { left: 160 },
                       children: [
-                        new TextRun({ text: `${label}. `, font: 'Times New Roman', size: 24, bold: true }),
+                        new TextRun({ text: `${label}. `, font: 'Times New Roman', size: 22, bold: true }),
                         ...makeTextRunsFromMultiline(opt.text),
                       ],
                     })
                   );
                   for (const img of opt.images || []) {
-                    const dim = fitImageDimensions(img.width, img.height, 280, 160);
+                    const dim = fitImageDimensions(img.width, img.height, 240, 140);
                     children.push(
                       new Paragraph({
-                        indent: { left: 480 },
-                        spacing: { before: 20, after: 40 },
+                        indent: { left: 320 },
+                        spacing: { before: 10, after: 15, line: 240 },
                         children: [new ImageRun({ data: img.bytes, transformation: dim })],
                       })
                     );
@@ -2838,16 +2941,16 @@
             const lastN = variantSections.tf[variantSections.tf.length - 1].exportNumber;
             children.push(
               new Paragraph({
-                spacing: { before: 200, after: 40 },
-                children: [new TextRun({ text: SECTION_META.tf.title, font: 'Times New Roman', size: 24, bold: true })],
+                spacing: { before: 80, after: 15, line: 240 },
+                children: [new TextRun({ text: SECTION_META.tf.title, font: 'Times New Roman', size: 22, bold: true })],
               }),
               new Paragraph({
-                spacing: { after: 80 },
+                spacing: { before: 0, after: 30, line: 240 },
                 children: [
                   new TextRun({
                     text: SECTION_META.tf.instruction.replace('{start}', firstN).replace('{end}', lastN),
                     font: 'Times New Roman',
-                    size: 22,
+                    size: 20,
                     italics: true,
                   }),
                 ],
@@ -2862,20 +2965,20 @@
                 const label = LETTERS_LOWER[idx] || String.fromCharCode(97 + idx);
                 children.push(
                   new Paragraph({
-                    spacing: { before: 20, after: 30 },
-                    indent: { left: 240 },
+                    spacing: { before: 0, after: 12, line: 240 },
+                    indent: { left: 160 },
                     children: [
-                      new TextRun({ text: `${label}) `, font: 'Times New Roman', size: 24, bold: true }),
+                      new TextRun({ text: `${label}) `, font: 'Times New Roman', size: 22, bold: true }),
                       ...makeTextRunsFromMultiline(st.text),
                     ],
                   })
                 );
                 for (const img of st.images || []) {
-                  const dim = fitImageDimensions(img.width, img.height, 280, 160);
+                  const dim = fitImageDimensions(img.width, img.height, 240, 140);
                   children.push(
                     new Paragraph({
-                      indent: { left: 480 },
-                      spacing: { before: 20, after: 40 },
+                      indent: { left: 320 },
+                      spacing: { before: 10, after: 15, line: 240 },
                       children: [new ImageRun({ data: img.bytes, transformation: dim })],
                     })
                   );
@@ -2890,16 +2993,16 @@
             const lastN = variantSections.short[variantSections.short.length - 1].exportNumber;
             children.push(
               new Paragraph({
-                spacing: { before: 200, after: 40 },
-                children: [new TextRun({ text: SECTION_META.short.title, font: 'Times New Roman', size: 24, bold: true })],
+                spacing: { before: 80, after: 15, line: 240 },
+                children: [new TextRun({ text: SECTION_META.short.title, font: 'Times New Roman', size: 22, bold: true })],
               }),
               new Paragraph({
-                spacing: { after: 80 },
+                spacing: { before: 0, after: 30, line: 240 },
                 children: [
                   new TextRun({
                     text: SECTION_META.short.instruction.replace('{start}', firstN).replace('{end}', lastN),
                     font: 'Times New Roman',
-                    size: 22,
+                    size: 20,
                     italics: true,
                   }),
                 ],
@@ -2912,15 +3015,43 @@
             }
           }
 
+          // --- SECTION IV: ESSAY (ONLY IF PRESENT) ---
+          if (variantSections.essay.length > 0) {
+            const firstN = variantSections.essay[0].exportNumber;
+            const lastN = variantSections.essay[variantSections.essay.length - 1].exportNumber;
+            children.push(
+              new Paragraph({
+                spacing: { before: 80, after: 15, line: 240 },
+                children: [new TextRun({ text: SECTION_META.essay.title, font: 'Times New Roman', size: 22, bold: true })],
+              }),
+              new Paragraph({
+                spacing: { before: 0, after: 30, line: 240 },
+                children: [
+                  new TextRun({
+                    text: SECTION_META.essay.instruction.replace('{start}', firstN).replace('{end}', lastN),
+                    font: 'Times New Roman',
+                    size: 20,
+                    italics: true,
+                  }),
+                ],
+              })
+            );
+
+            for (const q of variantSections.essay) {
+              appendGroupIntroIfNeeded(q);
+              appendStemAndImages(q);
+            }
+          }
+
           children.push(
             new Paragraph({
               alignment: AlignmentType.CENTER,
-              spacing: { before: 260 },
+              spacing: { before: 80, after: 0, line: 240 },
               children: [
                 new TextRun({
                   text: '---------- HẾT ----------',
                   font: 'Times New Roman',
-                  size: 24,
+                  size: 21,
                   bold: true,
                 }),
               ],
@@ -2928,6 +3059,19 @@
           );
 
           const doc = new Document({
+            styles: {
+              default: {
+                document: {
+                  run: {
+                    font: 'Times New Roman',
+                    size: 22,
+                  },
+                  paragraph: {
+                    spacing: { before: 0, after: 0, line: 240 },
+                  },
+                },
+              },
+            },
             sections: [
               {
                 properties: {
@@ -2937,10 +3081,10 @@
                       height: convertMillimetersToTwip(297),
                     },
                     margin: {
-                      top: convertMillimetersToTwip(18),
-                      bottom: convertMillimetersToTwip(18),
-                      left: convertMillimetersToTwip(20),
-                      right: convertMillimetersToTwip(15),
+                      top: convertMillimetersToTwip(10),
+                      bottom: convertMillimetersToTwip(10),
+                      left: convertMillimetersToTwip(13),
+                      right: convertMillimetersToTwip(11),
                     },
                   },
                 },
@@ -2949,11 +3093,12 @@
                     children: [
                       new Paragraph({
                         alignment: AlignmentType.RIGHT,
+                        spacing: { before: 0, after: 0, line: 240 },
                         children: [
-                          new TextRun({ text: `Mã đề ${examCode} — Trang `, font: 'Times New Roman', size: 20, italics: true }),
-                          new TextRun({ children: [PageNumber.CURRENT], font: 'Times New Roman', size: 20, italics: true }),
-                          new TextRun({ text: '/', font: 'Times New Roman', size: 20, italics: true }),
-                          new TextRun({ children: [PageNumber.TOTAL_PAGES], font: 'Times New Roman', size: 20, italics: true }),
+                          new TextRun({ text: `Mã đề ${examCode} — Trang `, font: 'Times New Roman', size: 18, italics: true }),
+                          new TextRun({ children: [PageNumber.CURRENT], font: 'Times New Roman', size: 18, italics: true }),
+                          new TextRun({ text: '/', font: 'Times New Roman', size: 18, italics: true }),
+                          new TextRun({ children: [PageNumber.TOTAL_PAGES], font: 'Times New Roman', size: 18, italics: true }),
                         ],
                       }),
                     ],
@@ -3076,7 +3221,10 @@
               spacing: { after: 60 },
               children: [
                 new TextRun({
-                  text: (config.school || 'TRƯỜNG THPT').toUpperCase(),
+                  text: [config.department || 'SỞ GD&ĐT NGHỆ AN', config.school || 'TRƯỜNG THPT ĐÔNG HIẾU']
+                    .filter(Boolean)
+                    .join(' — ')
+                    .toUpperCase(),
                   font: 'Times New Roman',
                   size: 24,
                   bold: true,
@@ -3100,7 +3248,7 @@
               spacing: { after: 140 },
               children: [
                 new TextRun({
-                  text: `Môn: ${config.subject || 'Trắc nghiệm'}   |   Thời gian: ${config.duration || '90 phút'}   |   Tổng số câu: ${totalQ}`,
+                  text: `Môn: ${config.subject || 'Tin học'}   |   Thời gian: ${config.duration || '45 phút'}   |   Tổng số câu: ${totalQ}`,
                   font: 'Times New Roman',
                   size: 22,
                   italics: true,
@@ -3117,6 +3265,9 @@
             ),
             ...buildSectionTable('short', 'PHẦN III. ĐÁP ÁN TRẮC NGHIỆM TRẢ LỜI NGẮN', (q) =>
               q && q.shortAnswer ? q.shortAnswer : '-'
+            ),
+            ...buildSectionTable('essay', 'PHẦN IV. TỰ LUẬN (GỢI Ý / HƯỚNG DẪN CHẤM)', (q) =>
+              q && q.shortAnswer ? q.shortAnswer : 'Tự luận'
             ),
           ];
 
@@ -3184,6 +3335,9 @@
           appendSectionCsv('short', 'PHẦN III. TRẮC NGHIỆM TRẢ LỜI NGẮN', (q) =>
             q && q.shortAnswer ? q.shortAnswer : ''
           );
+          appendSectionCsv('essay', 'PHẦN IV. TỰ LUẬN', (q) =>
+            q && q.shortAnswer ? q.shortAnswer : 'Tự luận'
+          );
 
           return '\uFEFF' + lines.join('\r\n');
         }
@@ -3208,7 +3362,9 @@
             originalNumber: q.originalNumber || null,
             sectionHint: q.sectionHint || q.section || 1,
             type: q.type || 'mcq',
-            section: q.section || (q.type === 'tf' ? 2 : q.type === 'short' ? 3 : 1),
+            section:
+              q.section ||
+              (q.type === 'tf' ? 2 : q.type === 'short' ? 3 : q.type === 'essay' ? 4 : 1),
             stem: q.stem || '',
             stemImages: cloneImageList(q.stemImages),
             options: (q.options || []).map((o) => ({
@@ -3258,7 +3414,9 @@
           if (!qObj || qObj.type === targetType) return qObj;
           const prevType = qObj.type;
           qObj.type = targetType;
-          qObj.section = targetType === 'tf' ? 2 : targetType === 'short' ? 3 : 1;
+          qObj.section =
+            targetType === 'tf' ? 2 : targetType === 'short' ? 3 : targetType === 'essay' ? 4 : 1;
+          qObj.sectionHint = qObj.section;
 
           if (targetType === 'mcq') {
             if (prevType === 'tf' && qObj.statements && qObj.statements.length > 0) {
@@ -3283,19 +3441,20 @@
             } else {
               qObj.statements = ensureFourStatements(qObj.statements);
             }
-          } else if (targetType === 'short') {
+          } else if (targetType === 'short' || targetType === 'essay') {
             qObj.shortAnswer = qObj.shortAnswer || '';
           }
           return qObj;
         }
 
         function createBlankQuestion(type) {
+          const secNum = type === 'tf' ? 2 : type === 'short' ? 3 : type === 'essay' ? 4 : 1;
           const q = {
             id: makeUid(),
             originalNumber: null,
-            sectionHint: type === 'tf' ? 2 : type === 'short' ? 3 : 1,
+            sectionHint: secNum,
             type,
-            section: type === 'tf' ? 2 : type === 'short' ? 3 : 1,
+            section: secNum,
             stem: '',
             stemImages: [],
             options: type === 'mcq' ? ensureFourOptions([]) : [],
@@ -3394,7 +3553,7 @@
               ...s,
               text: (s.text || '').trim(),
             }));
-          } else if (committed.type === 'short') {
+          } else if (committed.type === 'short' || committed.type === 'essay') {
             committed.shortAnswer = (committed.shortAnswer || '').trim();
           }
           state.questions[idx] = committed;
@@ -3420,6 +3579,7 @@
           const mcqList = questions.filter((q) => q.type === 'mcq');
           const tfList = questions.filter((q) => q.type === 'tf');
           const shortList = questions.filter((q) => q.type === 'short');
+          const essayList = questions.filter((q) => q.type === 'essay');
 
           const children = [];
 
@@ -3480,7 +3640,9 @@
                 }
               }
 
-              const tagsPrefix = `${q.fixedPosition ? '[CD] ' : ''}${q.fixedOptions && q.type !== 'short' ? '[KDD] ' : ''}`;
+              const tagsPrefix = `${q.fixedPosition ? '[CD] ' : ''}${
+                q.fixedOptions && q.type !== 'short' && q.type !== 'essay' ? '[KDD] ' : ''
+              }`;
               children.push(
                 new Paragraph({
                   spacing: { before: 100, after: 40 },
@@ -3557,6 +3719,14 @@
                     ],
                   })
                 );
+              } else if (q.type === 'essay' && q.shortAnswer) {
+                children.push(
+                  new Paragraph({
+                    children: [
+                      makeRun(`[DA: ${q.shortAnswer}]`, { bold: true, color: '0369A1' }),
+                    ],
+                  })
+                );
               }
 
               children.push(new Paragraph({ children: [] }));
@@ -3570,6 +3740,7 @@
           appendSection(mcqList, 'mcq');
           appendSection(tfList, 'tf');
           appendSection(shortList, 'short');
+          appendSection(essayList, 'essay');
 
           const doc = new Document({
             sections: [{ properties: {}, children }],
@@ -3631,7 +3802,7 @@
             hideAlert();
             state.isExporting = true;
             el.btnExportZip.disabled = true;
-            updateProgress(2, 'Đang chuẩn bị cấu hình trộn đề 3 phần...');
+            updateProgress(2, 'Đang chuẩn bị cấu hình trộn đề...');
             await yieldToUI();
 
             const codes = generateExamCodes();
@@ -3647,6 +3818,7 @@
               return;
             }
             const config = {
+              department: el.cfgDepartment.value.trim(),
               school: el.cfgSchool.value.trim(),
               examName: el.cfgExamName.value.trim(),
               subject: el.cfgSubject.value.trim(),
@@ -3689,8 +3861,8 @@
 
             showAlert(
               'success',
-              `Xuất thành công ${codes.length} mã đề (3 phần)`,
-              `Đã tải về Bo_De_Tron_2025.zip gồm ${codes.length} file .docx mã đề, Bang_Dap_An_Tong_Hop.docx và Bang_Dap_An.csv.`
+              `Xuất thành công ${codes.length} mã đề`,
+              `Đã tải về Bo_De_Tron_2025.zip gồm ${codes.length} file .docx mã đề (căn chỉnh tối giản A4), Bang_Dap_An_Tong_Hop.docx và Bang_Dap_An.csv.`
             );
           } catch (err) {
             console.error(err);
@@ -3718,7 +3890,8 @@
             const mcqCount = state.questions.filter((q) => q.type === 'mcq').length;
             const tfCount = state.questions.filter((q) => q.type === 'tf').length;
             const shortCount = state.questions.filter((q) => q.type === 'short').length;
-            el.loadedFileMeta.textContent = `Tổng ${state.questions.length} câu · P1: ${mcqCount} · P2: ${tfCount} · P3: ${shortCount}`;
+            const essayCount = state.questions.filter((q) => q.type === 'essay').length;
+            el.loadedFileMeta.textContent = `Tổng ${state.questions.length} câu · P1: ${mcqCount} · P2: ${tfCount} · P3: ${shortCount}${essayCount > 0 ? ` · P4: ${essayCount}` : ''}`;
           } else {
             el.fileInfoBar.classList.add('hidden');
           }
@@ -3731,6 +3904,7 @@
             mcq: 'Phần I (Nhiều lựa chọn)',
             tf: 'Phần II (Đúng / Sai)',
             short: 'Phần III (Trả lời ngắn)',
+            essay: 'Phần IV (Tự luận)',
           };
           return `
             <div class="px-5 py-3 bg-slate-50/70 flex items-center justify-between gap-3">
@@ -3865,7 +4039,7 @@
                 </div>
               </div>
             `;
-          } else {
+          } else if (draft.type === 'short') {
             answerEditorHtml = `
               <div>
                 <label for="draft-short-answer-input" class="block text-xs font-semibold text-slate-700 mb-1.5">
@@ -3878,6 +4052,22 @@
                   value="${escapeHtml(draft.shortAnswer)}"
                   placeholder="Ví dụ: -1,25 hoặc 2025"
                   class="w-full sm:max-w-xs px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                />
+              </div>
+            `;
+          } else {
+            answerEditorHtml = `
+              <div>
+                <label for="draft-short-answer-input" class="block text-xs font-semibold text-slate-700 mb-1.5">
+                  Gợi ý đáp án / Thang điểm tự luận (không bắt buộc)
+                </label>
+                <input
+                  id="draft-short-answer-input"
+                  type="text"
+                  data-action="draft-short-answer"
+                  value="${escapeHtml(draft.shortAnswer)}"
+                  placeholder="Để trống nếu chấm theo biểu điểm riêng..."
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
                 />
               </div>
             `;
@@ -3896,6 +4086,7 @@
                     <option value="mcq" ${draft.type === 'mcq' ? 'selected' : ''}>Phần I · Nhiều lựa chọn</option>
                     <option value="tf" ${draft.type === 'tf' ? 'selected' : ''}>Phần II · Đúng / Sai</option>
                     <option value="short" ${draft.type === 'short' ? 'selected' : ''}>Phần III · Trả lời ngắn</option>
+                    <option value="essay" ${draft.type === 'essay' ? 'selected' : ''}>Phần IV · Tự luận</option>
                   </select>
                 </div>
 
@@ -3910,7 +4101,7 @@
                     <span>Cố định <span class="font-mono">[CD]</span></span>
                   </label>
                   ${
-                    draft.type !== 'short'
+                    draft.type !== 'short' && draft.type !== 'essay'
                       ? `
                         <label class="inline-flex items-center gap-1.5 cursor-pointer select-none text-slate-700">
                           <input
@@ -4006,12 +4197,14 @@
           const mcqCount = state.questions.filter((q) => q.type === 'mcq').length;
           const tfCount = state.questions.filter((q) => q.type === 'tf').length;
           const shortCount = state.questions.filter((q) => q.type === 'short').length;
+          const essayCount = state.questions.filter((q) => q.type === 'essay').length;
           const errorCount = state.questions.filter((q) => getQuestionErrors(q).length > 0).length;
 
           el.countTabAll.textContent = allCount;
           el.countTabMcq.textContent = mcqCount;
           el.countTabTf.textContent = tfCount;
           el.countTabShort.textContent = shortCount;
+          el.countTabEssay.textContent = essayCount;
           el.countErrors.textContent = errorCount;
 
           if (!state.onlyErrors) {
@@ -4055,6 +4248,8 @@
             `<span aria-hidden="true">·</span>`,
             `<span>Phần III: <strong class="text-slate-800">${shortCount}</strong></span>`,
             `<span aria-hidden="true">·</span>`,
+            `<span>Phần IV: <strong class="text-slate-800">${essayCount}</strong>${essayCount === 0 ? ' (bỏ qua)' : ''}</span>`,
+            `<span aria-hidden="true">·</span>`,
             errorCount > 0
               ? `<span class="text-rose-600 font-medium">Lỗi: <strong>${errorCount}</strong> câu</span>`
               : `<span class="text-emerald-700 font-medium">Hợp lệ 100%</span>`,
@@ -4062,11 +4257,12 @@
           el.summaryStats.innerHTML = parts.join('');
           el.emptyState.classList.add('hidden');
 
-          const sectionOrder = state.sectionTab === 'all' ? ['mcq', 'tf', 'short'] : [state.sectionTab];
+          const sectionOrder = state.sectionTab === 'all' ? ['mcq', 'tf', 'short', 'essay'] : [state.sectionTab];
           const bySection = {
             mcq: state.questions.filter((q) => q.type === 'mcq'),
             tf: state.questions.filter((q) => q.type === 'tf'),
             short: state.questions.filter((q) => q.type === 'short'),
+            essay: state.questions.filter((q) => q.type === 'essay'),
           };
 
           const hasAnyVisibleQuestion = sectionOrder.some((secKey) => {
@@ -4080,12 +4276,15 @@
             el.questionsList.innerHTML = '';
             if (state.onlyErrors && errorCount === 0) {
               el.filteredEmptyTitle.textContent = 'Tất cả câu hỏi đều hợp lệ';
-              el.filteredEmptyDesc.textContent = 'Mọi câu hỏi ở cả 3 phần đều đã đầy đủ dữ liệu và đáp án.';
+              el.filteredEmptyDesc.textContent = 'Mọi câu hỏi đều đã đầy đủ dữ liệu và đáp án.';
               el.filteredEmptyAddWrap.innerHTML = '';
             } else {
               const targetSec = state.sectionTab === 'all' ? 'mcq' : state.sectionTab;
               el.filteredEmptyTitle.textContent = 'Chưa có câu hỏi nào trong phần này';
-              el.filteredEmptyDesc.textContent = 'Bạn có thể chuyển sang tab phần khác hoặc thêm câu hỏi mới ngay tại đây.';
+              el.filteredEmptyDesc.textContent =
+                targetSec === 'essay'
+                  ? 'Không có câu tự luận nào (hệ thống sẽ bỏ qua Phần IV khi xuất đề), hoặc bạn có thể thêm câu tự luận mới ngay tại đây.'
+                  : 'Bạn có thể chuyển sang tab phần khác hoặc thêm câu hỏi mới ngay tại đây.';
               el.filteredEmptyAddWrap.innerHTML = `
                 <button
                   type="button"
@@ -4115,6 +4314,14 @@
               : fullSecList;
 
             if (state.onlyErrors && visibleSecList.length === 0) return;
+
+            // If viewing "Tất cả" and Section IV (essay) is empty, omit the section header & only keep a compact add bar
+            if (secKey === 'essay' && state.sectionTab === 'all' && fullSecList.length === 0) {
+              if (!state.onlyErrors) {
+                htmlChunks.push(renderAddQuestionBarHtml('essay'));
+              }
+              return;
+            }
 
             // Section Header
             htmlChunks.push(`
@@ -4332,10 +4539,29 @@
                     </p>
                   </div>
                 `;
+              } else if (q.type === 'essay') {
+                interactiveBodyHtml = `
+                  <div class="mt-3 p-3 rounded-lg border border-slate-200 bg-slate-50/70">
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2.5">
+                      <label for="short-ans-${globalIndex}" class="text-xs font-medium text-slate-600 whitespace-nowrap shrink-0">
+                        Gợi ý chấm (tùy chọn):
+                      </label>
+                      <input
+                        id="short-ans-${globalIndex}"
+                        type="text"
+                        data-action="edit-short-answer"
+                        data-q-index="${globalIndex}"
+                        value="${escapeHtml(q.shortAnswer)}"
+                        placeholder="Không bắt buộc — để trống nếu chấm tự do"
+                        class="flex-1 px-3 py-1.5 text-xs sm:text-sm bg-white border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                      />
+                    </div>
+                  </div>
+                `;
               }
 
               const kddCheckboxHtml =
-                q.type !== 'short'
+                q.type !== 'short' && q.type !== 'essay'
                   ? `
                     <label class="inline-flex items-center gap-1.5 cursor-pointer select-none text-slate-700 hover:text-slate-900">
                       <input
@@ -4365,6 +4591,7 @@
                         <option value="mcq" ${q.type === 'mcq' ? 'selected' : ''}>Phần I · Nhiều lựa chọn</option>
                         <option value="tf" ${q.type === 'tf' ? 'selected' : ''}>Phần II · Đúng / Sai</option>
                         <option value="short" ${q.type === 'short' ? 'selected' : ''}>Phần III · Trả lời ngắn</option>
+                        <option value="essay" ${q.type === 'essay' ? 'selected' : ''}>Phần IV · Tự luận</option>
                       </select>
                       ${
                         q.originalNumber && q.originalNumber !== partQuestionNum
@@ -4463,18 +4690,20 @@
             const mcqC = state.questions.filter((q) => q.type === 'mcq').length;
             const tfC = state.questions.filter((q) => q.type === 'tf').length;
             const shortC = state.questions.filter((q) => q.type === 'short').length;
+            const essayC = state.questions.filter((q) => q.type === 'essay').length;
+            const partSummary = `P1: ${mcqC} · P2: ${tfC} · P3: ${shortC}${essayC > 0 ? ` · P4: ${essayC}` : ''}`;
 
             if (errorCount > 0) {
               showAlert(
                 'warning',
-                `Đã bóc tách ${state.questions.length} câu (P1: ${mcqC}, P2: ${tfC}, P3: ${shortC}) — Cần kiểm tra ${errorCount} câu`,
+                `Đã bóc tách ${state.questions.length} câu (${partSummary}) — Cần kiểm tra ${errorCount} câu`,
                 'Một số câu chưa đầy đủ phương án hoặc thiếu đáp án. Vui lòng chỉnh sửa trực tiếp trên giao diện bên phải.'
               );
             } else {
               showAlert(
                 'success',
-                `Bóc tách thành công ${state.questions.length} câu (P1: ${mcqC} · P2: ${tfC} · P3: ${shortC})`,
-                'Toàn bộ 3 phần câu hỏi và đáp án đã sẵn sàng để chỉnh sửa hoặc trộn đề.'
+                `Bóc tách thành công ${state.questions.length} câu (${partSummary})`,
+                'Toàn bộ câu hỏi và đáp án đã sẵn sàng để chỉnh sửa hoặc trộn đề.'
               );
             }
           } catch (err) {
