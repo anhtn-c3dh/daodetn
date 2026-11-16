@@ -174,6 +174,18 @@
               <p class="text-xs text-slate-500 mt-1">Tự động nhận diện Phần I–IV GDPT 2018 (xử lý tại trình duyệt)</p>
             </div>
 
+            <!-- Azota-style Manual / Paste Import Button -->
+            <div class="mt-3">
+              <button
+                id="btn-open-paste-left"
+                type="button"
+                class="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs sm:text-sm font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 transition-colors"
+              >
+                <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
+                <span>Nhập tay / Dán câu hỏi (Azota)</span>
+              </button>
+            </div>
+
             <!-- Loaded File Info -->
             <div id="file-info-bar" class="hidden mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-3">
               <div class="min-w-0">
@@ -446,8 +458,17 @@
                 </div>
               </div>
 
-              <!-- Error quick filter + Export Edited Source -->
+              <!-- Paste / Manual Entry + Error quick filter + Export Edited Source -->
               <div class="flex flex-wrap items-center gap-2 shrink-0">
+                <button
+                  id="btn-open-paste-toolbar"
+                  type="button"
+                  title="Dán câu hỏi hàng loạt hoặc từng phần theo kiểu Azota"
+                  class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 rounded-lg hover:bg-emerald-100 transition-colors whitespace-nowrap shrink-0"
+                >
+                  <i data-lucide="clipboard-plus" class="w-3.5 h-3.5"></i>
+                  <span>+ Dán / Nhập tay (Azota)</span>
+                </button>
                 <button
                   id="btn-export-edited-source"
                   type="button"
@@ -528,9 +549,17 @@
             </p>
             <div class="mt-5 flex flex-wrap items-center justify-center gap-3">
               <button
-                id="btn-empty-load-sample"
+                id="btn-open-paste-empty"
                 type="button"
                 class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-800 transition-colors whitespace-nowrap shrink-0"
+              >
+                <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
+                <span>Nhập tay / Dán câu hỏi (Azota)</span>
+              </button>
+              <button
+                id="btn-empty-load-sample"
+                type="button"
+                class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 transition-colors whitespace-nowrap shrink-0"
               >
                 <i data-lucide="play" class="w-4 h-4"></i>
                 <span>Nạp đề mẫu chuẩn 2025</span>
@@ -640,6 +669,320 @@
           >
             Xóa câu này
           </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Azota-style Manual / Paste Question Importer Modal -->
+    <div
+      id="paste-import-modal"
+      class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/55 backdrop-blur-[1px] p-3 sm:p-5"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="paste-modal-title"
+    >
+      <div class="bg-white border border-slate-200 rounded-2xl shadow-xl max-w-6xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+        <!-- Modal Header -->
+        <div class="px-5 py-4 border-b border-slate-200 flex items-start justify-between gap-4 bg-slate-50/70">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-sky-700 text-white flex items-center justify-center shrink-0">
+                <i data-lucide="clipboard-plus" class="w-4 h-4"></i>
+              </div>
+              <div>
+                <h3 id="paste-modal-title" class="text-base font-bold text-slate-900">
+                  Thêm câu hỏi tự nhập &amp; Dán nội dung (Chuẩn Azota)
+                </h3>
+                <p class="text-xs text-slate-500 mt-0.5">
+                  Dán nguyên văn bản từ Word/PDF/Web hoặc dán riêng từng phần của câu hỏi (lời dẫn, đáp án, hình ảnh Ctrl+V) vào đề.
+                </p>
+              </div>
+            </div>
+          </div>
+          <button
+            id="btn-close-paste-modal"
+            type="button"
+            aria-label="Đóng cửa sổ"
+            class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/70 transition-colors shrink-0"
+          >
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <!-- Mode Switch Tabs -->
+        <div class="px-5 pt-3 border-b border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center gap-2" role="tablist" aria-label="Chế độ nhập câu hỏi">
+            <button
+              id="paste-tab-bulk"
+              type="button"
+              data-paste-tab="bulk"
+              class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-sky-700 text-sky-700 transition-colors whitespace-nowrap"
+            >
+              1. Dán văn bản / Nhiều câu hỏi
+            </button>
+            <button
+              id="paste-tab-parts"
+              type="button"
+              data-paste-tab="parts"
+              class="px-4 py-2 text-xs sm:text-sm font-semibold border-b-2 border-transparent text-slate-600 hover:text-slate-900 transition-colors whitespace-nowrap"
+            >
+              2. Dán từng phần của câu hỏi (Lời dẫn · Đáp án · Ảnh)
+            </button>
+          </div>
+          <span class="text-[11px] text-slate-500 pb-2 hidden sm:inline">
+            Hỗ trợ tự nhận diện <span class="font-mono font-semibold text-slate-700">*A</span>, gạch chân/chữ đỏ khi dán từ Word, <span class="font-mono font-semibold text-slate-700">[Đ]/[S]</span>, <span class="font-mono font-semibold text-slate-700">Đáp án: X</span>
+          </span>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="flex-1 min-h-0 overflow-y-auto p-5 bg-slate-50/40">
+          <!-- TAB 1: BULK PASTE -->
+          <div id="paste-panel-bulk" class="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full">
+            <!-- Left: Raw Text Input + Quick Insert Chips -->
+            <div class="flex flex-col gap-2.5 min-h-[380px]">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                  <label for="paste-bulk-default-type" class="text-xs font-semibold text-slate-700 whitespace-nowrap">
+                    Mặc định đoạn dán:
+                  </label>
+                  <select
+                    id="paste-bulk-default-type"
+                    class="px-2.5 py-1.5 text-xs font-medium bg-white border border-slate-300 rounded-lg text-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-600"
+                  >
+                    <option value="0">Tự động nhận diện (Khuyên dùng)</option>
+                    <option value="1">Phần I · Trắc nghiệm nhiều lựa chọn</option>
+                    <option value="2">Phần II · Trắc nghiệm Đúng / Sai</option>
+                    <option value="3">Phần III · Trả lời ngắn</option>
+                    <option value="4">Phần IV · Tự luận</option>
+                  </select>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <button
+                    id="btn-paste-bulk-sample"
+                    type="button"
+                    class="px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 border border-sky-200 rounded-md hover:bg-sky-100 transition-colors whitespace-nowrap"
+                  >
+                    Nạp mẫu văn bản
+                  </button>
+                  <button
+                    id="btn-paste-bulk-clear"
+                    type="button"
+                    class="px-2.5 py-1 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors whitespace-nowrap"
+                  >
+                    Xóa trắng
+                  </button>
+                </div>
+              </div>
+
+              <!-- Quick Syntax Toolbar -->
+              <div class="flex flex-wrap items-center gap-1.5 p-2 bg-white border border-slate-200 rounded-lg">
+                <span class="text-[11px] font-medium text-slate-500 mr-1">Chèn nhanh:</span>
+                <button type="button" data-insert-snippet="mcq" class="px-2 py-0.5 text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors">+ Câu Phần I</button>
+                <button type="button" data-insert-snippet="tf" class="px-2 py-0.5 text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors">+ Câu Phần II</button>
+                <button type="button" data-insert-snippet="short" class="px-2 py-0.5 text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors">+ Câu Phần III</button>
+                <button type="button" data-insert-snippet="essay" class="px-2 py-0.5 text-[11px] font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded transition-colors">+ Câu Phần IV</button>
+                <button type="button" data-insert-snippet="cd" class="px-2 py-0.5 text-[11px] font-mono font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded transition-colors">[CD]</button>
+                <button type="button" data-insert-snippet="kdd" class="px-2 py-0.5 text-[11px] font-mono font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded transition-colors">[KDD]</button>
+                <button type="button" data-insert-snippet="group" class="px-2 py-0.5 text-[11px] font-mono font-semibold text-sky-700 bg-sky-50 hover:bg-sky-100 rounded transition-colors">[Nhom]</button>
+              </div>
+
+              <textarea
+                id="paste-bulk-textarea"
+                rows="15"
+                placeholder="Dán 1 câu hỏi hoặc toàn bộ đề vào đây (hỗ trợ dán trực tiếp từ Word/Google Docs/Web)...
+
+Ví dụ dán 1 câu không cần ghi 'Câu 1:':
+Trong bảng tính Excel, hàm nào dùng để tính tổng?
+A. AVERAGE
+*B. SUM
+C. COUNT
+D. MAX
+
+Hoặc dán nhiều câu theo các phần:
+PHẦN I. Câu trắc nghiệm nhiều lựa chọn
+Câu 1: ...
+A. ...   B. ...   C. ...   D. ...
+Đáp án: C"
+                class="flex-1 w-full min-h-[300px] p-3 text-xs sm:text-sm font-mono leading-relaxed text-slate-900 bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600 resize-y"
+              ></textarea>
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                Mẹo: Khi sao chép từ Microsoft Word có <u>gạch chân</u> hoặc <span class="text-red-600 font-medium">tô màu đỏ</span> đáp án đúng và dán (<span class="font-mono">Ctrl+V</span>) vào ô trên, hệ thống tự chuyển thành dấu <span class="font-mono font-semibold">*</span> hoặc <span class="font-mono font-semibold">[Đ]</span>.
+              </p>
+            </div>
+
+            <!-- Right: Live Preview -->
+            <div class="flex flex-col bg-white border border-slate-200 rounded-xl overflow-hidden min-h-[380px] max-h-[540px]">
+              <div class="px-3.5 py-2.5 border-b border-slate-200 bg-slate-50 flex items-center justify-between gap-2">
+                <span class="text-xs font-bold text-slate-800">Xem trước kết quả nhận diện</span>
+                <span id="paste-preview-summary" class="text-xs font-medium text-slate-600 tabular-nums">0 câu hỏi</span>
+              </div>
+              <div id="paste-preview-list" class="flex-1 overflow-y-auto p-3.5 space-y-2.5 text-xs">
+                <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 py-12 px-4">
+                  <i data-lucide="file-search" class="w-8 h-8 mb-2 opacity-70"></i>
+                  <p class="text-xs font-medium text-slate-500">Chưa có nội dung để phân tích</p>
+                  <p class="text-[11px] mt-1">Hãy dán nội dung câu hỏi vào khung bên trái hoặc bấm "Nạp mẫu văn bản" để kiểm tra.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: STRUCTURED PER-PART PASTE -->
+          <div id="paste-panel-parts" class="hidden max-w-3xl mx-auto w-full space-y-4">
+            <!-- Part Type & Control Tags -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <span class="text-xs font-bold text-slate-800 uppercase tracking-wide">Loại câu hỏi &amp; Thẻ điều khiển</span>
+                <div class="flex flex-wrap items-center gap-3 text-xs">
+                  <label class="inline-flex items-center gap-1.5 cursor-pointer select-none text-slate-700">
+                    <input id="paste-part-cd" type="checkbox" class="w-3.5 h-3.5 rounded border-slate-300 text-sky-700 focus:ring-sky-600" />
+                    <span>Cố định vị trí <span class="font-mono text-slate-500">[CD]</span></span>
+                  </label>
+                  <label id="paste-part-kdd-wrap" class="inline-flex items-center gap-1.5 cursor-pointer select-none text-slate-700">
+                    <input id="paste-part-kdd" type="checkbox" class="w-3.5 h-3.5 rounded border-slate-300 text-sky-700 focus:ring-sky-600" />
+                    <span>Giữ thứ tự đáp án <span class="font-mono text-slate-500">[KDD]</span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="paste-part-type-buttons">
+                <button type="button" data-part-type="mcq" class="px-3 py-2 text-xs font-semibold rounded-lg border bg-sky-700 text-white border-sky-700 transition-colors text-center">
+                  Phần I · Nhiều lựa chọn
+                </button>
+                <button type="button" data-part-type="tf" class="px-3 py-2 text-xs font-semibold rounded-lg border bg-white text-slate-700 border-slate-200 hover:bg-slate-50 transition-colors text-center">
+                  Phần II · Đúng / Sai
+                </button>
+                <button type="button" data-part-type="short" class="px-3 py-2 text-xs font-semibold rounded-lg border bg-white text-slate-700 border-slate-200 hover:bg-slate-50 transition-colors text-center">
+                  Phần III · Trả lời ngắn
+                </button>
+                <button type="button" data-part-type="essay" class="px-3 py-2 text-xs font-semibold rounded-lg border bg-white text-slate-700 border-slate-200 hover:bg-slate-50 transition-colors text-center">
+                  Phần IV · Tự luận
+                </button>
+              </div>
+            </div>
+
+            <!-- Stem & Image Part -->
+            <div class="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+              <div class="flex items-center justify-between gap-2">
+                <label for="paste-part-stem" class="text-xs font-bold text-slate-800 uppercase tracking-wide">
+                  Phần 1 · Nội dung câu hỏi (Lời dẫn)
+                </label>
+                <span class="text-[11px] text-slate-500">Hỗ trợ dán cả câu có A, B, C, D rồi tách nhanh</span>
+              </div>
+              <textarea
+                id="paste-part-stem"
+                rows="3"
+                placeholder="Nhập hoặc dán lời dẫn câu hỏi vào đây..."
+                class="w-full px-3 py-2 text-sm text-slate-900 bg-white border border-slate-300 rounded-lg leading-relaxed resize-y focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+              ></textarea>
+
+              <!-- Smart Auto-Split Prompt when user pastes full question into stem -->
+              <div id="paste-part-stem-detect-bar" class="hidden px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 flex flex-wrap items-center justify-between gap-2 text-xs">
+                <span class="text-amber-900 font-medium">
+                  Phát hiện có phương án / đáp án nằm chung trong ô lời dẫn!
+                </span>
+                <button
+                  id="btn-paste-part-autosplit-stem"
+                  type="button"
+                  class="px-2.5 py-1 font-semibold text-white bg-amber-600 rounded-md hover:bg-amber-700 transition-colors whitespace-nowrap"
+                >
+                  Tách tự động xuống các phần bên dưới
+                </button>
+              </div>
+
+              <!-- Image attachment -->
+              <div class="pt-2 border-t border-slate-100">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <span class="text-xs font-semibold text-slate-700">
+                    Ảnh minh họa đính kèm (<span id="paste-part-img-count">0</span>)
+                  </span>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <label class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-md hover:bg-sky-100 cursor-pointer transition-colors">
+                      <i data-lucide="image-plus" class="w-3.5 h-3.5"></i>
+                      <span>Chọn tệp ảnh</span>
+                      <input id="paste-part-upload-img" type="file" accept="image/*" multiple class="hidden" />
+                    </label>
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 border border-dashed border-slate-300 rounded-md">
+                      <i data-lucide="clipboard-paste" class="w-3.5 h-3.5"></i>
+                      <span>Hoặc nhấn Ctrl+V để dán ảnh</span>
+                    </span>
+                  </div>
+                </div>
+                <div id="paste-part-images-wrap" class="mt-2 flex flex-wrap gap-2.5"></div>
+              </div>
+            </div>
+
+            <!-- Answer / Options Part -->
+            <div id="paste-part-answers-wrap" class="bg-white border border-slate-200 rounded-xl p-4 space-y-3"></div>
+          </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-5 py-3.5 border-t border-slate-200 bg-white flex flex-wrap items-center justify-between gap-3">
+          <p id="paste-modal-footer-note" class="text-xs text-slate-500">
+            Câu hỏi được thêm sẽ tự động phân loại vào đúng Phần I–IV của đề thi.
+          </p>
+          <div class="flex flex-wrap items-center gap-2 ml-auto">
+            <!-- Bulk mode footer actions -->
+            <div id="paste-footer-bulk-actions" class="flex flex-wrap items-center gap-2">
+              <button
+                id="btn-paste-cancel-bulk"
+                type="button"
+                class="px-4 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Đóng
+              </button>
+              <button
+                id="btn-paste-bulk-replace"
+                type="button"
+                disabled
+                class="hidden px-4 py-2 text-xs sm:text-sm font-semibold text-amber-800 bg-amber-50 border border-amber-300 rounded-lg hover:bg-amber-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Thay thế toàn bộ đề
+              </button>
+              <button
+                id="btn-paste-bulk-append"
+                type="button"
+                disabled
+                class="inline-flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-800 disabled:bg-slate-300 disabled:text-slate-500 disabled:cursor-not-allowed transition-colors"
+              >
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                <span id="paste-bulk-append-label">Thêm vào đề hiện tại</span>
+              </button>
+            </div>
+
+            <!-- Per-part mode footer actions -->
+            <div id="paste-footer-parts-actions" class="hidden flex flex-wrap items-center gap-2">
+              <button
+                id="btn-paste-part-reset"
+                type="button"
+                class="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Làm mới ô nhập
+              </button>
+              <button
+                id="btn-paste-cancel-parts"
+                type="button"
+                class="px-3.5 py-2 text-xs sm:text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors"
+              >
+                Đóng
+              </button>
+              <button
+                id="btn-paste-part-save-next"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-lg hover:bg-sky-100 transition-colors"
+              >
+                <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                <span>Lưu &amp; Nhập câu tiếp</span>
+              </button>
+              <button
+                id="btn-paste-part-save-close"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-sky-700 rounded-lg hover:bg-sky-800 transition-colors"
+              >
+                <i data-lucide="check" class="w-4 h-4"></i>
+                <span>Thêm vào đề &amp; Đóng</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -766,6 +1109,42 @@
           confirmDeleteDesc: document.getElementById('confirm-delete-desc'),
           btnCancelDelete: document.getElementById('btn-cancel-delete'),
           btnConfirmDelete: document.getElementById('btn-confirm-delete'),
+          btnOpenPasteLeft: document.getElementById('btn-open-paste-left'),
+          btnOpenPasteToolbar: document.getElementById('btn-open-paste-toolbar'),
+          btnOpenPasteEmpty: document.getElementById('btn-open-paste-empty'),
+          pasteImportModal: document.getElementById('paste-import-modal'),
+          btnClosePasteModal: document.getElementById('btn-close-paste-modal'),
+          pasteTabBulk: document.getElementById('paste-tab-bulk'),
+          pasteTabParts: document.getElementById('paste-tab-parts'),
+          pastePanelBulk: document.getElementById('paste-panel-bulk'),
+          pastePanelParts: document.getElementById('paste-panel-parts'),
+          pasteBulkDefaultType: document.getElementById('paste-bulk-default-type'),
+          btnPasteBulkSample: document.getElementById('btn-paste-bulk-sample'),
+          btnPasteBulkClear: document.getElementById('btn-paste-bulk-clear'),
+          pasteBulkTextarea: document.getElementById('paste-bulk-textarea'),
+          pastePreviewSummary: document.getElementById('paste-preview-summary'),
+          pastePreviewList: document.getElementById('paste-preview-list'),
+          pastePartCd: document.getElementById('paste-part-cd'),
+          pastePartKdd: document.getElementById('paste-part-kdd'),
+          pastePartKddWrap: document.getElementById('paste-part-kdd-wrap'),
+          pastePartTypeButtons: document.getElementById('paste-part-type-buttons'),
+          pastePartStem: document.getElementById('paste-part-stem'),
+          pastePartStemDetectBar: document.getElementById('paste-part-stem-detect-bar'),
+          btnPastePartAutosplitStem: document.getElementById('btn-paste-part-autosplit-stem'),
+          pastePartUploadImg: document.getElementById('paste-part-upload-img'),
+          pastePartImgCount: document.getElementById('paste-part-img-count'),
+          pastePartImagesWrap: document.getElementById('paste-part-images-wrap'),
+          pastePartAnswersWrap: document.getElementById('paste-part-answers-wrap'),
+          pasteFooterBulkActions: document.getElementById('paste-footer-bulk-actions'),
+          pasteFooterPartsActions: document.getElementById('paste-footer-parts-actions'),
+          btnPasteCancelBulk: document.getElementById('btn-paste-cancel-bulk'),
+          btnPasteBulkReplace: document.getElementById('btn-paste-bulk-replace'),
+          btnPasteBulkAppend: document.getElementById('btn-paste-bulk-append'),
+          pasteBulkAppendLabel: document.getElementById('paste-bulk-append-label'),
+          btnPastePartReset: document.getElementById('btn-paste-part-reset'),
+          btnPasteCancelParts: document.getElementById('btn-paste-cancel-parts'),
+          btnPastePartSaveNext: document.getElementById('btn-paste-part-save-next'),
+          btnPastePartSaveClose: document.getElementById('btn-paste-part-save-close'),
           alertBanner: document.getElementById('alert-banner'),
           alertIcon: document.getElementById('alert-icon'),
           alertTitle: document.getElementById('alert-title'),
@@ -1941,387 +2320,807 @@
           return null;
         }
 
-        async function parseDocxArrayBuffer(arrayBuffer) {
-          if (!window.JSZip) throw new Error('Thư viện JSZip chưa được tải.');
-          const zip = await window.JSZip.loadAsync(arrayBuffer);
-          const docXmlFile = zip.file('word/document.xml');
-          if (!docXmlFile) {
-            throw new Error('File không hợp lệ: Không tìm thấy word/document.xml bên trong file .docx.');
-          }
+        function parseParagraphsToQuestions(paragraphs, parseOptions = {}) {
+            const { defaultSectionHint = 0, throwIfEmpty = true } = parseOptions;
+            const questions = [];
+            const groups = {};
+            let currentQuestion = null;
+            let inGroup = false;
+            let currentGroupId = null;
+            let groupCounter = 0;
+            let groupHasSeenQuestion = false;
+            let currentSectionHint = defaultSectionHint || 0; // 0 = unknown, 1 = MCQ, 2 = TF, 3 = Short, 4 = Essay
+            let awaitingSectionInstruction = false;
 
-          const mediaMap = await loadMediaMap(zip);
-          const docXmlText = await docXmlFile.async('string');
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(docXmlText, 'application/xml');
+            const finalizeQuestion = () => {
+              if (!currentQuestion) return;
 
-          const parserError = xmlDoc.getElementsByTagName('parsererror');
-          if (parserError && parserError.length > 0) {
-            throw new Error('Lỗi cấu trúc XML trong tài liệu Word.');
-          }
+              const stemTags = extractControlTags(currentQuestion.stem);
+              currentQuestion.stem = stemTags.cleaned;
+              if (stemTags.hasCD) currentQuestion.fixedPosition = true;
+              if (stemTags.hasKDD) currentQuestion.fixedOptions = true;
 
-          const bodyNode = getAllByLocalName(xmlDoc, 'body')[0];
-          if (!bodyNode) throw new Error('Không tìm thấy nội dung <w:body> trong file Word.');
+              // Check options / statements tags
+              currentQuestion.options = currentQuestion.options.map((opt) => {
+                const optTags = extractControlTags(opt.text);
+                if (optTags.hasCD) currentQuestion.fixedPosition = true;
+                if (optTags.hasKDD) currentQuestion.fixedOptions = true;
+                return {
+                  text: optTags.cleaned,
+                  images: opt.images || [],
+                  _styleScore: opt._styleScore,
+                };
+              });
 
-          // Flatten paragraphs & tables
-          const paragraphs = [];
-          for (let i = 0; i < bodyNode.childNodes.length; i++) {
-            const child = bodyNode.childNodes[i];
-            if (child.nodeType !== 1) continue;
-            if (child.localName === 'p') {
-              paragraphs.push(...extractParagraphLines(child, mediaMap));
-            } else if (child.localName === 'tbl') {
-              const rows = getAllByLocalName(child, 'tr');
-              for (const row of rows) {
-                const cells = getAllByLocalName(row, 'tc');
-                const cellParagraphs = [];
-                for (const cell of cells) {
-                  const ps = [];
-                  getAllByLocalName(cell, 'p').forEach((p) => ps.push(...extractParagraphLines(p, mediaMap)));
-                  cellParagraphs.push(ps);
+              currentQuestion.statements = currentQuestion.statements.map((st) => {
+                const stTags = extractControlTags(st.text);
+                if (stTags.hasCD) currentQuestion.fixedPosition = true;
+                if (stTags.hasKDD) currentQuestion.fixedOptions = true;
+                const resolvedTf = resolveTrueFalseStatement(stTags.cleaned, st._styleScore);
+                return {
+                  text: resolvedTf.text,
+                  images: st.images || [],
+                  isTrue: resolvedTf.isTrue,
+                  detectedBy: resolvedTf.detectedBy,
+                };
+              });
+
+              // Also inspect trailing "Đáp án: A" inside last option if it slipped inline
+              if (currentQuestion.options.length > 0 && !currentQuestion._explicitMcqAnswerLetter) {
+                const lastOpt = currentQuestion.options[currentQuestion.options.length - 1];
+                const trailingAns = (lastOpt.text || '').match(
+                  /(?:\n|\s{2,})(?:Đáp\s*án(?:\s*đúng)?|ĐA|DA|Chọn|Key)\s*[:.]?\s*([A-D])(?:\s*[.)])?\s*$/i
+                );
+                if (trailingAns) {
+                  currentQuestion._explicitMcqAnswerLetter = trailingAns[1].toUpperCase();
+                  lastOpt.text = lastOpt.text.slice(0, trailingAns.index).trim();
                 }
-                const cellTexts = cellParagraphs.map((ps) => ps.map((p) => p.fullText.trim()).join(' ').trim());
-                const looksLikeOptionRow =
-                  cells.length >= 2 &&
-                  cellTexts.every(
-                    (t) =>
-                      !t ||
-                      /^\*?\s*[A-D](?:\s*[.):]|\s+|$)/.test(t) ||
-                      /^[a-d]\s*[.)]/.test(t)
-                  );
+              }
 
+              // Extract short answer / optional essay guide from stem
+              const shortRes = extractShortAnswerFromStem(currentQuestion.stem);
+              const hasExplicitShortAnswer = Boolean(shortRes.shortAnswer);
+
+              // Classify Question into Type 1 (mcq), Type 2 (tf), Type 3 (short), or Type 4 (essay)
+              if (currentQuestion.sectionHint === 4) {
+                currentQuestion.type = 'essay';
+                currentQuestion.section = 4;
+                currentQuestion.stem = shortRes.cleanedStem;
+                currentQuestion.shortAnswer = shortRes.shortAnswer;
+                currentQuestion.options = [];
+                currentQuestion.statements = [];
+              } else if (currentQuestion.statements.length > 0) {
+                currentQuestion.type = 'tf';
+                currentQuestion.section = 2;
+              } else if (currentQuestion.options.length > 0) {
+                currentQuestion.type = 'mcq';
+                currentQuestion.section = 1;
+                const resolved = resolveMcqCorrectAnswer(currentQuestion.options);
+                currentQuestion.correctIndex = resolved.index;
+                currentQuestion.detectedBy = resolved.source;
                 if (
-                  looksLikeOptionRow &&
-                  cellTexts.some(
-                    (t) => /^\*?\s*[A-D](?:\s*[.):]|\s+|$)/.test(t) || /^[a-d]\s*[.)]/.test(t)
-                  )
+                  (currentQuestion.correctIndex === null || currentQuestion.correctIndex === undefined) &&
+                  currentQuestion._explicitMcqAnswerLetter
                 ) {
-                  let mergedText = '';
-                  let mergedStyles = [];
-                  const mergedImages = [];
-                  cellParagraphs.forEach((ps, cIdx) => {
-                    if (cIdx > 0) {
-                      mergedText += '\t';
-                      mergedStyles.push({ underline: false, isColored: false, isRed: false });
+                  const ansIdx = LETTERS_UPPER.indexOf(currentQuestion._explicitMcqAnswerLetter);
+                  if (ansIdx >= 0 && ansIdx < currentQuestion.options.length) {
+                    currentQuestion.correctIndex = ansIdx;
+                    currentQuestion.detectedBy = 'answer-line';
+                  }
+                }
+              } else if (hasExplicitShortAnswer || currentQuestion.sectionHint === 3) {
+                currentQuestion.type = 'short';
+                currentQuestion.section = 3;
+                currentQuestion.stem = shortRes.cleanedStem;
+                currentQuestion.shortAnswer = shortRes.shortAnswer;
+              } else if (currentQuestion.sectionHint === 2) {
+                currentQuestion.type = 'tf';
+                currentQuestion.section = 2;
+              } else {
+                currentQuestion.type = 'mcq';
+                currentQuestion.section = 1;
+                currentQuestion.correctIndex = null;
+              }
+
+              // Ensure stem doesn't retain [DA:] or Đáp án: if short
+              if (currentQuestion.type === 'short') {
+                currentQuestion.stem = shortRes.cleanedStem;
+                currentQuestion.shortAnswer = shortRes.shortAnswer;
+              }
+
+              delete currentQuestion._explicitMcqAnswerLetter;
+              questions.push(currentQuestion);
+              currentQuestion = null;
+            };
+
+            for (const para of paragraphs) {
+              let text = para.fullText.replace(/\r/g, '');
+              const trimmed = text.trim();
+
+              if (!trimmed && para.images.length === 0) continue;
+
+              // Detect Section Headers (PHẦN I, PHẦN II, PHẦN III, PHẦN IV) & end markers
+              const secNum = detectSectionHeader(trimmed);
+              if (secNum !== null) {
+                finalizeQuestion();
+                inGroup = false;
+                currentGroupId = null;
+                currentSectionHint = secNum;
+                awaitingSectionInstruction = true;
+                continue;
+              }
+
+              if (/^-+\s*HẾT\s*-+$/i.test(trimmed)) {
+                finalizeQuestion();
+                inGroup = false;
+                currentGroupId = null;
+                continue;
+              }
+
+              if (awaitingSectionInstruction && !/^Câu\s+\d+\s*[:.]/i.test(trimmed) && !/\[Nhom\]/i.test(trimmed)) {
+                // Skip instruction lines like "Thí sinh trả lời từ câu 1 đến câu 4..."
+                if (/^(?:Thí sinh|Mỗi câu|Trong mỗi ý|Chú ý|Lưu ý)/i.test(trimmed)) {
+                  continue;
+                }
+                awaitingSectionInstruction = false;
+              }
+
+              // Detect [Nhom] opening tag
+              if (/\[Nhom\]/i.test(text)) {
+                finalizeQuestion();
+                awaitingSectionInstruction = false;
+                groupCounter++;
+                currentGroupId = `G${groupCounter}`;
+                inGroup = true;
+                groupHasSeenQuestion = false;
+                groups[currentGroupId] = {
+                  id: currentGroupId,
+                  introParagraphs: [],
+                };
+                text = text.replace(/\[Nhom\]/gi, '').trim();
+                if (!text && para.images.length === 0) continue;
+              }
+
+              let closeGroupAfter = false;
+              if (/\[\/Nhom\]/i.test(text)) {
+                closeGroupAfter = true;
+                text = text.replace(/\[\/Nhom\]/gi, '').trim();
+                if (!text && para.images.length === 0) {
+                  finalizeQuestion();
+                  inGroup = false;
+                  currentGroupId = null;
+                  continue;
+                }
+              }
+
+              const cleanTrimmed = text.trim();
+
+              // 1. Question Start: /^Câu\s+\d+\s*[:.]/i
+              const qMatch = cleanTrimmed.match(/^Câu\s+(\d+)\s*[:.]\s*(.*)$/i);
+              if (qMatch) {
+                finalizeQuestion();
+                awaitingSectionInstruction = false;
+                const originalNumber = parseInt(qMatch[1], 10);
+                const remainder = qMatch[2] || '';
+
+                const qPrefixMatch = para.fullText.match(/Câu\s+\d+\s*[:.]\s*/i);
+                const qBodyStart = qPrefixMatch ? qPrefixMatch.index + qPrefixMatch[0].length : 0;
+                const strippedSub = stripPatternWithStyles(
+                  para.fullText.slice(qBodyStart),
+                  para.charStyles.slice(qBodyStart),
+                  /\[\/?Nhom\]/gi
+                );
+
+                // Check if inline MCQ options or TF statements appear on the same line as Câu X (skip splitting for Section IV Essay):
+                const allowSplitInline = currentSectionHint !== 4;
+                const mcqSplit = allowSplitInline ? splitMcqOptions(strippedSub.text, strippedSub.charStyles) : null;
+                const tfSplit = allowSplitInline && !mcqSplit ? splitTrueFalseStatements(strippedSub.text, strippedSub.charStyles) : null;
+
+                currentQuestion = {
+                  id: makeUid(),
+                  originalNumber,
+                  sectionHint: currentSectionHint,
+                  type: currentSectionHint === 4 ? 'essay' : 'mcq',
+                  section: currentSectionHint || 1,
+                  stem: mcqSplit ? mcqSplit.stemPrefix : tfSplit ? tfSplit.stemPrefix : remainder,
+                  stemImages: [...para.images],
+                  options: [],
+                  statements: [],
+                  correctIndex: null,
+                  detectedBy: null,
+                  shortAnswer: '',
+                  fixedPosition: false,
+                  fixedOptions: false,
+                  groupId: inGroup ? currentGroupId : null,
+                };
+
+                if (mcqSplit && mcqSplit.parsedOptions.length > 0) {
+                  for (const opt of mcqSplit.parsedOptions) {
+                    currentQuestion.options.push({ text: opt.text, images: [], _styleScore: opt.styleScore });
+                  }
+                } else if (tfSplit && tfSplit.parsedStatements.length > 0) {
+                  for (const st of tfSplit.parsedStatements) {
+                    currentQuestion.statements.push({ text: st.text, images: [], _styleScore: st.styleScore });
+                  }
+                }
+
+                if (inGroup) groupHasSeenQuestion = true;
+                if (closeGroupAfter) {
+                  finalizeQuestion();
+                  inGroup = false;
+                  currentGroupId = null;
+                }
+                continue;
+              }
+
+              // 2. Group intro passage before first question
+              if (inGroup && !groupHasSeenQuestion && !currentQuestion) {
+                const introClean = extractControlTags(cleanTrimmed).cleaned;
+                if (introClean || para.images.length > 0) {
+                  groups[currentGroupId].introParagraphs.push({
+                    text: introClean,
+                    images: [...para.images],
+                  });
+                }
+                if (closeGroupAfter) {
+                  inGroup = false;
+                  currentGroupId = null;
+                }
+                continue;
+              }
+
+              // 3. Inside an active question -> check explicit MCQ answer line, TF statements a..d OR MCQ options A..D
+              if (currentQuestion) {
+                if (currentQuestion.options.length > 0 && currentQuestion.sectionHint !== 4) {
+                  const ansLineMatch = cleanTrimmed.match(
+                    /^(?:Đáp\s*án(?:\s*đúng)?|ĐA|DA|Chọn|Key)\s*[:.]?\s*([A-D])(?:\s*[.):]|\s*$)/i
+                  );
+                  if (ansLineMatch) {
+                    currentQuestion._explicitMcqAnswerLetter = ansLineMatch[1].toUpperCase();
+                    if (closeGroupAfter) {
+                      finalizeQuestion();
+                      inGroup = false;
+                      currentGroupId = null;
                     }
-                    ps.forEach((p) => {
-                      mergedText += p.fullText;
-                      mergedStyles = mergedStyles.concat(p.charStyles);
-                      mergedImages.push(...p.images);
+                    continue;
+                  }
+                }
+
+                const strippedLine = stripPatternWithStyles(para.fullText, para.charStyles, /\[\/?Nhom\]/gi);
+                const allowSplitLine = currentQuestion.sectionHint !== 4;
+                const tfSplit =
+                  allowSplitLine && currentQuestion.options.length === 0
+                    ? splitTrueFalseStatements(strippedLine.text, strippedLine.charStyles)
+                    : null;
+                const mcqSplit =
+                  allowSplitLine && !tfSplit && currentQuestion.statements.length === 0
+                    ? splitMcqOptions(strippedLine.text, strippedLine.charStyles)
+                    : null;
+
+                if (tfSplit && tfSplit.parsedStatements.length > 0) {
+                  if (tfSplit.stemPrefix && currentQuestion.statements.length === 0) {
+                    currentQuestion.stem = currentQuestion.stem
+                      ? `${currentQuestion.stem}\n${tfSplit.stemPrefix}`
+                      : tfSplit.stemPrefix;
+                  }
+                  tfSplit.parsedStatements.forEach((st, idx) => {
+                    const stImgs = tfSplit.parsedStatements.length === 1 && idx === 0 ? [...para.images] : [];
+                    currentQuestion.statements.push({
+                      text: st.text,
+                      images: stImgs,
+                      _styleScore: st.styleScore,
                     });
                   });
-                  paragraphs.push({ fullText: mergedText, charStyles: mergedStyles, images: mergedImages });
-                } else {
-                  for (const ps of cellParagraphs) {
-                    for (const p of ps) paragraphs.push(p);
-                  }
-                }
-              }
-            }
-          }
-
-          const questions = [];
-          const groups = {};
-          let currentQuestion = null;
-          let inGroup = false;
-          let currentGroupId = null;
-          let groupCounter = 0;
-          let groupHasSeenQuestion = false;
-          let currentSectionHint = 0; // 0 = unknown, 1 = MCQ, 2 = TF, 3 = Short
-          let awaitingSectionInstruction = false;
-
-          const finalizeQuestion = () => {
-            if (!currentQuestion) return;
-
-            const stemTags = extractControlTags(currentQuestion.stem);
-            currentQuestion.stem = stemTags.cleaned;
-            if (stemTags.hasCD) currentQuestion.fixedPosition = true;
-            if (stemTags.hasKDD) currentQuestion.fixedOptions = true;
-
-            // Check options / statements tags
-            currentQuestion.options = currentQuestion.options.map((opt) => {
-              const optTags = extractControlTags(opt.text);
-              if (optTags.hasCD) currentQuestion.fixedPosition = true;
-              if (optTags.hasKDD) currentQuestion.fixedOptions = true;
-              return {
-                text: optTags.cleaned,
-                images: opt.images || [],
-                _styleScore: opt._styleScore,
-              };
-            });
-
-            currentQuestion.statements = currentQuestion.statements.map((st) => {
-              const stTags = extractControlTags(st.text);
-              if (stTags.hasCD) currentQuestion.fixedPosition = true;
-              if (stTags.hasKDD) currentQuestion.fixedOptions = true;
-              const resolvedTf = resolveTrueFalseStatement(stTags.cleaned, st._styleScore);
-              return {
-                text: resolvedTf.text,
-                images: st.images || [],
-                isTrue: resolvedTf.isTrue,
-                detectedBy: resolvedTf.detectedBy,
-              };
-            });
-
-            // Extract short answer / optional essay guide from stem
-            const shortRes = extractShortAnswerFromStem(currentQuestion.stem);
-            const hasExplicitShortAnswer = Boolean(shortRes.shortAnswer);
-
-            // Classify Question into Type 1 (mcq), Type 2 (tf), Type 3 (short), or Type 4 (essay)
-            if (currentQuestion.sectionHint === 4) {
-              currentQuestion.type = 'essay';
-              currentQuestion.section = 4;
-              currentQuestion.stem = shortRes.cleanedStem;
-              currentQuestion.shortAnswer = shortRes.shortAnswer;
-              currentQuestion.options = [];
-              currentQuestion.statements = [];
-            } else if (currentQuestion.statements.length > 0) {
-              currentQuestion.type = 'tf';
-              currentQuestion.section = 2;
-            } else if (currentQuestion.options.length > 0) {
-              currentQuestion.type = 'mcq';
-              currentQuestion.section = 1;
-              const resolved = resolveMcqCorrectAnswer(currentQuestion.options);
-              currentQuestion.correctIndex = resolved.index;
-              currentQuestion.detectedBy = resolved.source;
-            } else if (hasExplicitShortAnswer || currentQuestion.sectionHint === 3) {
-              currentQuestion.type = 'short';
-              currentQuestion.section = 3;
-              currentQuestion.stem = shortRes.cleanedStem;
-              currentQuestion.shortAnswer = shortRes.shortAnswer;
-            } else if (currentQuestion.sectionHint === 2) {
-              currentQuestion.type = 'tf';
-              currentQuestion.section = 2;
-            } else {
-              currentQuestion.type = 'mcq';
-              currentQuestion.section = 1;
-              currentQuestion.correctIndex = null;
-            }
-
-            // Ensure stem doesn't retain [DA:] or Đáp án: if short
-            if (currentQuestion.type === 'short') {
-              currentQuestion.stem = shortRes.cleanedStem;
-              currentQuestion.shortAnswer = shortRes.shortAnswer;
-            }
-
-            questions.push(currentQuestion);
-            currentQuestion = null;
-          };
-
-          for (const para of paragraphs) {
-            let text = para.fullText.replace(/\r/g, '');
-            const trimmed = text.trim();
-
-            if (!trimmed && para.images.length === 0) continue;
-
-            // Detect Section Headers (PHẦN I, PHẦN II, PHẦN III) & end markers
-            const secNum = detectSectionHeader(trimmed);
-            if (secNum !== null) {
-              finalizeQuestion();
-              inGroup = false;
-              currentGroupId = null;
-              currentSectionHint = secNum;
-              awaitingSectionInstruction = true;
-              continue;
-            }
-
-            if (/^-+\s*HẾT\s*-+$/i.test(trimmed)) {
-              finalizeQuestion();
-              inGroup = false;
-              currentGroupId = null;
-              continue;
-            }
-
-            if (awaitingSectionInstruction && !/^Câu\s+\d+\s*[:.]/i.test(trimmed) && !/\[Nhom\]/i.test(trimmed)) {
-              // Skip instruction lines like "Thí sinh trả lời từ câu 1 đến câu 4..."
-              if (/^(?:Thí sinh|Mỗi câu|Trong mỗi ý|Chú ý|Lưu ý)/i.test(trimmed)) {
-                continue;
-              }
-              awaitingSectionInstruction = false;
-            }
-
-            // Detect [Nhom] opening tag
-            if (/\[Nhom\]/i.test(text)) {
-              finalizeQuestion();
-              awaitingSectionInstruction = false;
-              groupCounter++;
-              currentGroupId = `G${groupCounter}`;
-              inGroup = true;
-              groupHasSeenQuestion = false;
-              groups[currentGroupId] = {
-                id: currentGroupId,
-                introParagraphs: [],
-              };
-              text = text.replace(/\[Nhom\]/gi, '').trim();
-              if (!text && para.images.length === 0) continue;
-            }
-
-            let closeGroupAfter = false;
-            if (/\[\/Nhom\]/i.test(text)) {
-              closeGroupAfter = true;
-              text = text.replace(/\[\/Nhom\]/gi, '').trim();
-              if (!text && para.images.length === 0) {
-                finalizeQuestion();
-                inGroup = false;
-                currentGroupId = null;
-                continue;
-              }
-            }
-
-            const cleanTrimmed = text.trim();
-
-            // 1. Question Start: /^Câu\s+\d+\s*[:.]/i
-            const qMatch = cleanTrimmed.match(/^Câu\s+(\d+)\s*[:.]\s*(.*)$/i);
-            if (qMatch) {
-              finalizeQuestion();
-              awaitingSectionInstruction = false;
-              const originalNumber = parseInt(qMatch[1], 10);
-              const remainder = qMatch[2] || '';
-
-              const qPrefixMatch = para.fullText.match(/Câu\s+\d+\s*[:.]\s*/i);
-              const qBodyStart = qPrefixMatch ? qPrefixMatch.index + qPrefixMatch[0].length : 0;
-              const strippedSub = stripPatternWithStyles(
-                para.fullText.slice(qBodyStart),
-                para.charStyles.slice(qBodyStart),
-                /\[\/?Nhom\]/gi
-              );
-
-              // Check if inline MCQ options or TF statements appear on the same line as Câu X (skip splitting for Section IV Essay):
-              const allowSplitInline = currentSectionHint !== 4;
-              const mcqSplit = allowSplitInline ? splitMcqOptions(strippedSub.text, strippedSub.charStyles) : null;
-              const tfSplit = allowSplitInline && !mcqSplit ? splitTrueFalseStatements(strippedSub.text, strippedSub.charStyles) : null;
-
-              currentQuestion = {
-                id: makeUid(),
-                originalNumber,
-                sectionHint: currentSectionHint,
-                type: currentSectionHint === 4 ? 'essay' : 'mcq',
-                section: currentSectionHint || 1,
-                stem: mcqSplit ? mcqSplit.stemPrefix : tfSplit ? tfSplit.stemPrefix : remainder,
-                stemImages: [...para.images],
-                options: [],
-                statements: [],
-                correctIndex: null,
-                detectedBy: null,
-                shortAnswer: '',
-                fixedPosition: false,
-                fixedOptions: false,
-                groupId: inGroup ? currentGroupId : null,
-              };
-
-              if (mcqSplit && mcqSplit.parsedOptions.length > 0) {
-                for (const opt of mcqSplit.parsedOptions) {
-                  currentQuestion.options.push({ text: opt.text, images: [], _styleScore: opt.styleScore });
-                }
-              } else if (tfSplit && tfSplit.parsedStatements.length > 0) {
-                for (const st of tfSplit.parsedStatements) {
-                  currentQuestion.statements.push({ text: st.text, images: [], _styleScore: st.styleScore });
-                }
-              }
-
-              if (inGroup) groupHasSeenQuestion = true;
-              if (closeGroupAfter) {
-                finalizeQuestion();
-                inGroup = false;
-                currentGroupId = null;
-              }
-              continue;
-            }
-
-            // 2. Group intro passage before first question
-            if (inGroup && !groupHasSeenQuestion && !currentQuestion) {
-              const introClean = extractControlTags(cleanTrimmed).cleaned;
-              if (introClean || para.images.length > 0) {
-                groups[currentGroupId].introParagraphs.push({
-                  text: introClean,
-                  images: [...para.images],
-                });
-              }
-              if (closeGroupAfter) {
-                inGroup = false;
-                currentGroupId = null;
-              }
-              continue;
-            }
-
-            // 3. Inside an active question -> check TF statements a..d OR MCQ options A..D (skip for Essay)
-            if (currentQuestion) {
-              const strippedLine = stripPatternWithStyles(para.fullText, para.charStyles, /\[\/?Nhom\]/gi);
-              const allowSplitLine = currentQuestion.sectionHint !== 4;
-              const tfSplit =
-                allowSplitLine && currentQuestion.options.length === 0
-                  ? splitTrueFalseStatements(strippedLine.text, strippedLine.charStyles)
-                  : null;
-              const mcqSplit =
-                allowSplitLine && !tfSplit && currentQuestion.statements.length === 0
-                  ? splitMcqOptions(strippedLine.text, strippedLine.charStyles)
-                  : null;
-
-              if (tfSplit && tfSplit.parsedStatements.length > 0) {
-                if (tfSplit.stemPrefix && currentQuestion.statements.length === 0) {
-                  currentQuestion.stem = currentQuestion.stem
-                    ? `${currentQuestion.stem}\n${tfSplit.stemPrefix}`
-                    : tfSplit.stemPrefix;
-                }
-                tfSplit.parsedStatements.forEach((st, idx) => {
-                  const stImgs = tfSplit.parsedStatements.length === 1 && idx === 0 ? [...para.images] : [];
-                  currentQuestion.statements.push({
-                    text: st.text,
-                    images: stImgs,
-                    _styleScore: st.styleScore,
-                  });
-                });
-              } else if (mcqSplit && mcqSplit.parsedOptions.length > 0) {
-                if (mcqSplit.stemPrefix && currentQuestion.options.length === 0) {
-                  currentQuestion.stem = currentQuestion.stem
-                    ? `${currentQuestion.stem}\n${mcqSplit.stemPrefix}`
-                    : mcqSplit.stemPrefix;
-                }
-                mcqSplit.parsedOptions.forEach((opt, idx) => {
-                  const optImgs = mcqSplit.parsedOptions.length === 1 && idx === 0 ? [...para.images] : [];
-                  currentQuestion.options.push({
-                    text: opt.text,
-                    images: optImgs,
-                    _styleScore: opt.styleScore,
-                  });
-                });
-              } else {
-                // Continuation text / images
-                if (currentQuestion.statements.length > 0) {
-                  const lastSt = currentQuestion.statements[currentQuestion.statements.length - 1];
-                  if (cleanTrimmed) lastSt.text = lastSt.text ? `${lastSt.text}\n${cleanTrimmed}` : cleanTrimmed;
-                  if (para.images.length > 0) lastSt.images.push(...para.images);
-                } else if (currentQuestion.options.length > 0) {
-                  const lastOpt = currentQuestion.options[currentQuestion.options.length - 1];
-                  if (cleanTrimmed) lastOpt.text = lastOpt.text ? `${lastOpt.text}\n${cleanTrimmed}` : cleanTrimmed;
-                  if (para.images.length > 0) lastOpt.images.push(...para.images);
-                } else {
-                  if (cleanTrimmed) {
+                } else if (mcqSplit && mcqSplit.parsedOptions.length > 0) {
+                  if (mcqSplit.stemPrefix && currentQuestion.options.length === 0) {
                     currentQuestion.stem = currentQuestion.stem
-                      ? `${currentQuestion.stem}\n${cleanTrimmed}`
-                      : cleanTrimmed;
+                      ? `${currentQuestion.stem}\n${mcqSplit.stemPrefix}`
+                      : mcqSplit.stemPrefix;
                   }
-                  if (para.images.length > 0) currentQuestion.stemImages.push(...para.images);
+                  mcqSplit.parsedOptions.forEach((opt, idx) => {
+                    const optImgs = mcqSplit.parsedOptions.length === 1 && idx === 0 ? [...para.images] : [];
+                    currentQuestion.options.push({
+                      text: opt.text,
+                      images: optImgs,
+                      _styleScore: opt.styleScore,
+                    });
+                  });
+                } else {
+                  // Continuation text / images
+                  if (currentQuestion.statements.length > 0) {
+                    const lastSt = currentQuestion.statements[currentQuestion.statements.length - 1];
+                    if (cleanTrimmed) lastSt.text = lastSt.text ? `${lastSt.text}\n${cleanTrimmed}` : cleanTrimmed;
+                    if (para.images.length > 0) lastSt.images.push(...para.images);
+                  } else if (currentQuestion.options.length > 0) {
+                    const lastOpt = currentQuestion.options[currentQuestion.options.length - 1];
+                    if (cleanTrimmed) lastOpt.text = lastOpt.text ? `${lastOpt.text}\n${cleanTrimmed}` : cleanTrimmed;
+                    if (para.images.length > 0) lastOpt.images.push(...para.images);
+                  } else {
+                    if (cleanTrimmed) {
+                      currentQuestion.stem = currentQuestion.stem
+                        ? `${currentQuestion.stem}\n${cleanTrimmed}`
+                        : cleanTrimmed;
+                    }
+                    if (para.images.length > 0) currentQuestion.stemImages.push(...para.images);
+                  }
+                }
+              }
+
+              if (closeGroupAfter) {
+                finalizeQuestion();
+                inGroup = false;
+                currentGroupId = null;
+              }
+            }
+
+            finalizeQuestion();
+
+            if (throwIfEmpty && questions.length === 0) {
+              throw new Error(
+                'Không nhận diện được câu hỏi nào. Hãy đảm bảo mỗi câu bắt đầu bằng "Câu 1:", "Câu 2:"...'
+              );
+            }
+
+            return { questions, groups };
+          }
+
+          async function parseDocxArrayBuffer(arrayBuffer) {
+            if (!window.JSZip) throw new Error('Thư viện JSZip chưa được tải.');
+            const zip = await window.JSZip.loadAsync(arrayBuffer);
+            const docXmlFile = zip.file('word/document.xml');
+            if (!docXmlFile) {
+              throw new Error('File không hợp lệ: Không tìm thấy word/document.xml bên trong file .docx.');
+            }
+
+            const mediaMap = await loadMediaMap(zip);
+            const docXmlText = await docXmlFile.async('string');
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(docXmlText, 'application/xml');
+
+            const parserError = xmlDoc.getElementsByTagName('parsererror');
+            if (parserError && parserError.length > 0) {
+              throw new Error('Lỗi cấu trúc XML trong tài liệu Word.');
+            }
+
+            const bodyNode = getAllByLocalName(xmlDoc, 'body')[0];
+            if (!bodyNode) throw new Error('Không tìm thấy nội dung <w:body> trong file Word.');
+
+            // Flatten paragraphs & tables
+            const paragraphs = [];
+            for (let i = 0; i < bodyNode.childNodes.length; i++) {
+              const child = bodyNode.childNodes[i];
+              if (child.nodeType !== 1) continue;
+              if (child.localName === 'p') {
+                paragraphs.push(...extractParagraphLines(child, mediaMap));
+              } else if (child.localName === 'tbl') {
+                const rows = getAllByLocalName(child, 'tr');
+                for (const row of rows) {
+                  const cells = getAllByLocalName(row, 'tc');
+                  const cellParagraphs = [];
+                  for (const cell of cells) {
+                    const ps = [];
+                    getAllByLocalName(cell, 'p').forEach((p) => ps.push(...extractParagraphLines(p, mediaMap)));
+                    cellParagraphs.push(ps);
+                  }
+                  const cellTexts = cellParagraphs.map((ps) => ps.map((p) => p.fullText.trim()).join(' ').trim());
+                  const looksLikeOptionRow =
+                    cells.length >= 2 &&
+                    cellTexts.every(
+                      (t) =>
+                        !t ||
+                        /^\*?\s*[A-D](?:\s*[.):]|\s+|$)/.test(t) ||
+                        /^[a-d]\s*[.)]/.test(t)
+                    );
+
+                  if (
+                    looksLikeOptionRow &&
+                    cellTexts.some(
+                      (t) => /^\*?\s*[A-D](?:\s*[.):]|\s+|$)/.test(t) || /^[a-d]\s*[.)]/.test(t)
+                    )
+                  ) {
+                    let mergedText = '';
+                    let mergedStyles = [];
+                    const mergedImages = [];
+                    cellParagraphs.forEach((ps, cIdx) => {
+                      if (cIdx > 0) {
+                        mergedText += '\t';
+                        mergedStyles.push({ underline: false, isColored: false, isRed: false });
+                      }
+                      ps.forEach((p) => {
+                        mergedText += p.fullText;
+                        mergedStyles = mergedStyles.concat(p.charStyles);
+                        mergedImages.push(...p.images);
+                      });
+                    });
+                    paragraphs.push({ fullText: mergedText, charStyles: mergedStyles, images: mergedImages });
+                  } else {
+                    for (const ps of cellParagraphs) {
+                      for (const p of ps) paragraphs.push(p);
+                    }
+                  }
                 }
               }
             }
 
-            if (closeGroupAfter) {
-              finalizeQuestion();
-              inGroup = false;
-              currentGroupId = null;
+            return parseParagraphsToQuestions(paragraphs, { defaultSectionHint: 0, throwIfEmpty: true });
+          }
+
+          // =========================================================================
+          // 4B. AZOTA-STYLE RAW TEXT & WORD CLIPBOARD HTML PARSERS
+          // =========================================================================
+          function parseCssColorString(colorStr) {
+            if (!colorStr) return { isColored: false, isRed: false, hex: null };
+            const s = colorStr.trim().toLowerCase();
+            if (!s || s === 'inherit' || s === 'initial' || s === 'windowtext' || s === 'black' || s === '#000' || s === '#000000') {
+              return { isColored: false, isRed: false, hex: null };
+            }
+            if (s === 'red' || s === 'crimson' || s === 'firebrick' || s === 'darkred') {
+              return { isColored: true, isRed: true, hex: 'FF0000' };
+            }
+            if (s.startsWith('#')) {
+              let hex = s.slice(1);
+              if (hex.length === 3) hex = hex.split('').map((c) => c + c).join('');
+              return analyzeHexColor(hex);
+            }
+            const rgb = s.match(/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
+            if (rgb) {
+              const r = Math.min(255, parseInt(rgb[1], 10));
+              const g = Math.min(255, parseInt(rgb[2], 10));
+              const b = Math.min(255, parseInt(rgb[3], 10));
+              const hex = [r, g, b].map((n) => n.toString(16).padStart(2, '0')).join('').toUpperCase();
+              return analyzeHexColor(hex);
+            }
+            return { isColored: true, isRed: false, hex: null };
+          }
+
+          function extractAzotaTextFromClipboardHtml(html) {
+            if (!html) return null;
+            try {
+              const doc = new DOMParser().parseFromString(html, 'text/html');
+              const body = doc.body;
+              if (!body) return null;
+
+              const lines = [{ fullText: '', charStyles: [] }];
+              const pushLine = () => {
+                if (lines[lines.length - 1].fullText.length > 0 || lines.length === 0) {
+                  lines.push({ fullText: '', charStyles: [] });
+                }
+              };
+              const appendText = (txt, st) => {
+                if (!txt) return;
+                const clean = txt.replace(/\u00A0/g, ' ').replace(/\r/g, '');
+                const parts = clean.split('\n');
+                parts.forEach((part, idx) => {
+                  if (idx > 0) lines.push({ fullText: '', charStyles: [] });
+                  for (let i = 0; i < part.length; i++) {
+                    lines[lines.length - 1].fullText += part[i];
+                    lines[lines.length - 1].charStyles.push({
+                      underline: st.underline,
+                      isColored: st.isColored,
+                      isRed: st.isRed,
+                      hex: st.hex,
+                    });
+                  }
+                });
+              };
+
+              const BLOCK_TAGS = new Set([
+                'P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'TR', 'BLOCKQUOTE', 'PRE', 'SECTION', 'ARTICLE',
+              ]);
+              const IGNORE_TAGS = new Set(['STYLE', 'SCRIPT', 'META', 'LINK', 'XML', 'HEAD', 'TITLE']);
+
+              const walk = (node, parentStyle) => {
+                if (!node) return;
+                if (node.nodeType === 3) {
+                  appendText(node.nodeValue || '', parentStyle);
+                  return;
+                }
+                if (node.nodeType !== 1) return;
+                const tag = (node.tagName || '').toUpperCase();
+                if (IGNORE_TAGS.has(tag)) return;
+                if (tag === 'BR') {
+                  lines.push({ fullText: '', charStyles: [] });
+                  return;
+                }
+                if (tag === 'TD' || tag === 'TH') {
+                  if (lines[lines.length - 1].fullText.trim().length > 0) {
+                    appendText('\t', { underline: false, isColored: false, isRed: false, hex: null });
+                  }
+                }
+
+                const styleAttr = (node.getAttribute('style') || '').toLowerCase();
+                const nextStyle = { ...parentStyle };
+                if (tag === 'U' || tag === 'INS' || /text-decoration[^;]*underline/.test(styleAttr)) {
+                  nextStyle.underline = true;
+                }
+                if (/text-decoration[^;]*none/.test(styleAttr)) {
+                  nextStyle.underline = false;
+                }
+                const colorMatch = styleAttr.match(/(?:^|;)\s*color\s*:\s*([^;]+)/i);
+                const fontColor = node.getAttribute('color');
+                if (colorMatch) {
+                  const parsed = parseCssColorString(colorMatch[1]);
+                  nextStyle.isColored = parsed.isColored;
+                  nextStyle.isRed = parsed.isRed;
+                  nextStyle.hex = parsed.hex;
+                } else if (fontColor) {
+                  const parsed = parseCssColorString(fontColor);
+                  nextStyle.isColored = parsed.isColored;
+                  nextStyle.isRed = parsed.isRed;
+                  nextStyle.hex = parsed.hex;
+                }
+
+                const isBlock = BLOCK_TAGS.has(tag);
+                if (isBlock && lines[lines.length - 1].fullText.length > 0) {
+                  pushLine();
+                }
+
+                for (let i = 0; i < node.childNodes.length; i++) {
+                  walk(node.childNodes[i], nextStyle);
+                }
+
+                if (isBlock) {
+                  pushLine();
+                }
+              };
+
+              walk(body, { underline: false, isColored: false, isRed: false, hex: null });
+
+              let detectedFormatMark = false;
+              const convertedLines = lines.map((line) => {
+                const raw = line.fullText.replace(/[ \t]+$/g, '');
+                if (!raw.trim()) return '';
+                if (/^\s*Câu\s+\d+\s*[:.]/i.test(raw) || detectSectionHeader(raw.trim())) {
+                  return raw.trim();
+                }
+
+                // Check MCQ options with underline/red -> prepend '*'
+                const mcq = splitMcqOptions(raw, line.charStyles);
+                if (mcq && mcq.parsedOptions.length > 0) {
+                  const res = resolveMcqCorrectAnswer(
+                    mcq.parsedOptions.map((o) => ({ text: o.text, _styleScore: o.styleScore }))
+                  );
+                  if (res.index !== null && res.source && res.source !== 'asterisk') {
+                    detectedFormatMark = true;
+                    const parts = [];
+                    if (mcq.stemPrefix) parts.push(mcq.stemPrefix);
+                    mcq.parsedOptions.forEach((opt, idx) => {
+                      const letter = LETTERS_UPPER[opt.letterIndex] || LETTERS_UPPER[idx] || 'A';
+                      const star = idx === res.index ? '*' : '';
+                      parts.push(`${star}${letter}. ${opt.text}`);
+                    });
+                    return parts.join(mcq.parsedOptions.length > 1 ? '\t' : '');
+                  }
+                }
+
+                // Check TF statements with underline/red -> append [Đ]
+                const tf = splitTrueFalseStatements(raw, line.charStyles);
+                if (tf && tf.parsedStatements.length > 0) {
+                  let lineHasMarkedTf = false;
+                  const parts = [];
+                  if (tf.stemPrefix) parts.push(tf.stemPrefix);
+                  tf.parsedStatements.forEach((st, idx) => {
+                    const letter = LETTERS_LOWER[st.letterIndex] || LETTERS_LOWER[idx] || 'a';
+                    const resolved = resolveTrueFalseStatement(st.text, st.styleScore);
+                    if (resolved.isTrue && resolved.detectedBy !== 'tag') {
+                      lineHasMarkedTf = true;
+                      detectedFormatMark = true;
+                    }
+                    const suffix = resolved.isTrue && resolved.detectedBy !== 'tag' ? ' [Đ]' : '';
+                    parts.push(`${letter}) ${st.text}${suffix}`);
+                  });
+                  if (lineHasMarkedTf) {
+                    return parts.join(tf.parsedStatements.length > 1 ? '\t' : '');
+                  }
+                }
+
+                return raw;
+              });
+
+              const outText = convertedLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+              if (!outText) return null;
+              return { text: outText, detectedFormatMark };
+            } catch (e) {
+              return null;
             }
           }
 
-          finalizeQuestion();
+          function parseRawTextToQuestions(rawText, defaultSectionHint = 0) {
+            const normalized = (rawText || '').replace(/\r\n?/g, '\n').trim();
+            if (!normalized) return { questions: [], groups: {}, answerKeyApplied: 0 };
 
-          if (questions.length === 0) {
-            throw new Error(
-              'Không nhận diện được câu hỏi nào. Hãy đảm bảo mỗi câu bắt đầu bằng "Câu 1:", "Câu 2:"...'
-            );
+            let rawLines = normalized.split('\n');
+
+            // Extract optional trailing bulk answer key (e.g., "Bảng đáp án: 1.A 2.C 3.B")
+            const trailingKeyMap = {};
+            const keyLineRegex = /^(?:Bảng\s*đáp\s*án|Đáp\s*án\s*đề)\s*[:.]?\s*(.*)$/i;
+            const pairRegex = /(\d+)\s*[.\-:/)]?\s*([A-D])\b/gi;
+            let answerHeaderIdx = -1;
+            for (let i = rawLines.length - 1; i >= 0; i--) {
+              const t = rawLines[i].trim();
+              if (!t) continue;
+              if (keyLineRegex.test(t)) {
+                answerHeaderIdx = i;
+                break;
+              }
+              if (/^Câu\s+\d+\s*[:.]/i.test(t) || /^[A-D]\s*[.)]/.test(t) || /^[a-d]\s*[.)]/.test(t)) {
+                break;
+              }
+            }
+            if (answerHeaderIdx !== -1) {
+              const tailText = rawLines.slice(answerHeaderIdx).join(' ');
+              let m;
+              let pairCount = 0;
+              while ((m = pairRegex.exec(tailText)) !== null) {
+                trailingKeyMap[parseInt(m[1], 10)] = m[2].toUpperCase();
+                pairCount++;
+              }
+              if (pairCount >= 2) {
+                rawLines = rawLines.slice(0, answerHeaderIdx);
+              }
+            }
+
+            // If user pasted 1 or more questions WITHOUT "Câu 1:", auto-wrap into Câu N: blocks
+            const hasExplicitQuestionMarkers = rawLines.some((l) => /^Câu\s+\d+\s*[:.]/i.test(l.trim()));
+            if (!hasExplicitQuestionMarkers) {
+              const wrapped = [];
+              let qNum = 1;
+              let currentBlock = [];
+              let blockHasOptionsOrAns = false;
+
+              const isOptionOrAnsLine = (t) =>
+                /^\*?\s*[A-D]\s*[.):](?:\s|$)/.test(t) ||
+                /^[a-d]\s*[.)](?:\s|$)/.test(t) ||
+                /^\[[DĐ]A\s*:/i.test(t) ||
+                /^(?:Đáp\s*án(?:\s*đúng)?|Đáp\s*số|Trả\s*lời|ĐA|DA|Chọn|Key)\s*[:.]/i.test(t);
+
+              const flushBlock = () => {
+                if (currentBlock.length === 0) return;
+                let insertedNum = false;
+                for (const line of currentBlock) {
+                  const t = line.trim();
+                  if (!t) {
+                    wrapped.push('');
+                    continue;
+                  }
+                  if (!insertedNum && !detectSectionHeader(t) && !/\[\/?Nhom\]/i.test(t)) {
+                    wrapped.push(`Câu ${qNum++}: ${t}`);
+                    insertedNum = true;
+                  } else {
+                    wrapped.push(line);
+                  }
+                }
+                currentBlock = [];
+                blockHasOptionsOrAns = false;
+              };
+
+              let sawBlankAfterOpt = false;
+              for (const line of rawLines) {
+                const t = line.trim();
+                if (!t) {
+                  if (blockHasOptionsOrAns) sawBlankAfterOpt = true;
+                  currentBlock.push('');
+                  continue;
+                }
+                if (detectSectionHeader(t) !== null) {
+                  flushBlock();
+                  wrapped.push(t);
+                  sawBlankAfterOpt = false;
+                  continue;
+                }
+                if (blockHasOptionsOrAns && sawBlankAfterOpt && !isOptionOrAnsLine(t)) {
+                  flushBlock();
+                  sawBlankAfterOpt = false;
+                } else {
+                  sawBlankAfterOpt = false;
+                }
+                if (isOptionOrAnsLine(t)) blockHasOptionsOrAns = true;
+                currentBlock.push(line);
+              }
+              flushBlock();
+              rawLines = wrapped;
+            }
+
+            const paragraphs = rawLines.map((line) => ({
+              fullText: line,
+              charStyles: new Array(line.length).fill({ underline: false, isColored: false, isRed: false, hex: null }),
+              images: [],
+            }));
+
+            const parsed = parseParagraphsToQuestions(paragraphs, {
+              defaultSectionHint: defaultSectionHint || 0,
+              throwIfEmpty: false,
+            });
+
+            // Apply trailing answer key if any MCQ questions still have null correctIndex
+            let answerKeyApplied = 0;
+            if (Object.keys(trailingKeyMap).length > 0) {
+              parsed.questions.forEach((q, idx) => {
+                if (q.type === 'mcq' && (q.correctIndex === null || q.correctIndex === undefined)) {
+                  const keyLetter = trailingKeyMap[q.originalNumber || idx + 1];
+                  if (keyLetter) {
+                    const ansIdx = LETTERS_UPPER.indexOf(keyLetter);
+                    if (ansIdx >= 0 && ansIdx < q.options.length) {
+                      q.correctIndex = ansIdx;
+                      q.detectedBy = 'answer-line';
+                      answerKeyApplied++;
+                    }
+                  }
+                }
+              });
+            }
+
+            return { ...parsed, answerKeyApplied };
           }
 
-          return { questions, groups };
-        }
+          function splitQuickOptionsBlock(rawText, mode) {
+            const text = (rawText || '').replace(/\r\n?/g, '\n').trim();
+            if (!text) return null;
+
+            const charStyles = new Array(text.length).fill({ underline: false, isColored: false, isRed: false, hex: null });
+            if (mode === 'mcq') {
+              const flat = text.replace(/\n+/g, '\t');
+              const flatStyles = new Array(flat.length).fill({ underline: false, isColored: false, isRed: false, hex: null });
+              const split = splitMcqOptions(flat, flatStyles);
+              if (split && split.parsedOptions.length >= 2) {
+                let correctIndex = null;
+                const options = ensureFourOptions(
+                  split.parsedOptions.slice(0, 4).map((o, idx) => {
+                    if (o.styleScore && o.styleScore.hasAsterisk && correctIndex === null) {
+                      correctIndex = idx;
+                    }
+                    return { text: o.text, images: [] };
+                  })
+                );
+                return { options, correctIndex };
+              }
+              // Fallback: split by non-empty lines (1 option per line)
+              const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+              if (lines.length >= 2) {
+                let correctIndex = null;
+                const options = ensureFourOptions(
+                  lines.slice(0, 4).map((line, idx) => {
+                    let clean = line;
+                    if (clean.startsWith('*')) {
+                      if (correctIndex === null) correctIndex = idx;
+                      clean = clean.replace(/^\*\s*/, '').trim();
+                    }
+                    clean = clean.replace(/^[A-D]\s*[.):]\s*/i, '').trim();
+                    return { text: clean, images: [] };
+                  })
+                );
+                return { options, correctIndex };
+              }
+              return null;
+            }
+
+            if (mode === 'tf') {
+              const flat = text.replace(/\n+/g, '\t');
+              const flatStyles = new Array(flat.length).fill({ underline: false, isColored: false, isRed: false, hex: null });
+              const split = splitTrueFalseStatements(flat, flatStyles);
+              if (split && split.parsedStatements.length >= 2) {
+                const statements = ensureFourStatements(
+                  split.parsedStatements.slice(0, 4).map((s) => {
+                    const res = resolveTrueFalseStatement(s.text, s.styleScore);
+                    return { text: res.text, images: [], isTrue: res.isTrue, detectedBy: res.detectedBy };
+                  })
+                );
+                return { statements };
+              }
+              const lines = text.split('\n').map((l) => l.trim()).filter(Boolean);
+              if (lines.length >= 2) {
+                const statements = ensureFourStatements(
+                  lines.slice(0, 4).map((line) => {
+                    const clean = line.replace(/^[a-d]\s*[.)]\s*/i, '').trim();
+                    const res = resolveTrueFalseStatement(clean, null);
+                    return { text: res.text, images: [], isTrue: res.isTrue, detectedBy: res.detectedBy };
+                  })
+                );
+                return { statements };
+              }
+            }
+            return null;
+          }
 
         async function processDocxArrayBuffer(arrayBuffer, fileName) {
           for (const q of state.questions) {
@@ -4401,6 +5200,7 @@
                   underline: 'gạch chân',
                   red: 'màu đỏ',
                   color: 'tô màu',
+                  'answer-line': 'dòng Đáp án',
                 };
                 const optionsHtml = q.options
                   .map((opt, oIdx) => {
@@ -5084,6 +5884,835 @@
           }
           renderQuestions();
         });
+
+        // =========================================================================
+        // 9. AZOTA-STYLE MANUAL / PASTE IMPORT MODAL LOGIC
+        // =========================================================================
+        const pasteState = {
+          activeTab: 'bulk', // 'bulk' | 'parts'
+          parsedBulk: { questions: [], groups: {} },
+          partDraft: createBlankQuestion('mcq'),
+        };
+
+        const PASTE_SAMPLE_TEXT = `PHẦN I. Câu trắc nghiệm nhiều phương án lựa chọn
+Câu 1: Giao thức nào dùng để truyền tải siêu văn bản (trang web) trên Internet?
+A. FTP
+*B. HTTP
+C. SMTP
+D. DNS
+
+Câu 2: Trong Python, câu lệnh nào dùng để in dữ liệu ra màn hình?
+A. input()
+B. len()
+C. print()
+D. range()
+Đáp án: C
+
+PHẦN II. Câu trắc nghiệm đúng sai
+Câu 1: Xét các phát biểu về mạng máy tính sau đây:
+a) Switch là thiết bị dùng để kết nối các máy tính trong cùng mạng LAN. [Đ]
+b) Địa chỉ IPv4 gồm 64 bit nhị phân. [S]
+c) Router giúp định tuyến gói tin giữa các mạng khác nhau. [Đ]
+d) Cáp xoắn đôi truyền tín hiệu bằng tia laser. [S]
+
+PHẦN III. Câu trắc nghiệm trả lời ngắn
+Câu 1: Số nhị phân 10110 chuyển sang hệ thập phân bằng bao nhiêu?
+[DA: 22]
+
+PHẦN IV. Câu hỏi tự luận
+Câu 1: Trình bày vai trò của tường lửa (Firewall) trong bảo mật hệ thống mạng.`;
+
+        const PASTE_SNIPPETS = {
+          mcq: `\nCâu mới: Nội dung câu hỏi trắc nghiệm...\nA. Phương án A\n*B. Phương án B\nC. Phương án C\nD. Phương án D\n`,
+          tf: `\nCâu mới: Xét tính đúng sai của các mệnh đề sau:\na) Nội dung ý a [Đ]\nb) Nội dung ý b [S]\nc) Nội dung ý c [Đ]\nd) Nội dung ý d [S]\n`,
+          short: `\nCâu mới: Nội dung câu trả lời ngắn...\n[DA: 2025]\n`,
+          essay: `\nPHẦN IV. Câu hỏi tự luận\nCâu mới: Nội dung câu hỏi tự luận...\n`,
+          cd: ' [CD]',
+          kdd: ' [KDD]',
+          group: `\n[Nhom]\nĐoạn văn / Tình huống chung cho các câu hỏi bên dưới...\nCâu 1: ...\nA. ...  *B. ...  C. ...  D. ...\n[/Nhom]\n`,
+        };
+
+        function setPasteModalTab(tab) {
+          pasteState.activeTab = tab;
+          if (tab === 'bulk') {
+            el.pasteTabBulk.classList.add('border-sky-700', 'text-sky-700');
+            el.pasteTabBulk.classList.remove('border-transparent', 'text-slate-600');
+            el.pasteTabParts.classList.remove('border-sky-700', 'text-sky-700');
+            el.pasteTabParts.classList.add('border-transparent', 'text-slate-600');
+            el.pastePanelBulk.classList.remove('hidden');
+            el.pastePanelParts.classList.add('hidden');
+            el.pasteFooterBulkActions.classList.remove('hidden');
+            el.pasteFooterPartsActions.classList.add('hidden');
+          } else {
+            el.pasteTabParts.classList.add('border-sky-700', 'text-sky-700');
+            el.pasteTabParts.classList.remove('border-transparent', 'text-slate-600');
+            el.pasteTabBulk.classList.remove('border-sky-700', 'text-sky-700');
+            el.pasteTabBulk.classList.add('border-transparent', 'text-slate-600');
+            el.pastePanelParts.classList.remove('hidden');
+            el.pastePanelBulk.classList.add('hidden');
+            el.pasteFooterPartsActions.classList.remove('hidden');
+            el.pasteFooterBulkActions.classList.add('hidden');
+            renderPastePartForm();
+          }
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function updateBulkPastePreview() {
+          const raw = el.pasteBulkTextarea.value || '';
+          const defaultHint = parseInt(el.pasteBulkDefaultType.value, 10) || 0;
+          const parsed = parseRawTextToQuestions(raw, defaultHint);
+          pasteState.parsedBulk = parsed;
+
+          const count = parsed.questions.length;
+          const hasExisting = state.questions.length > 0;
+          el.btnPasteBulkAppend.disabled = count === 0;
+          el.btnPasteBulkReplace.disabled = count === 0;
+          if (hasExisting) {
+            el.btnPasteBulkReplace.classList.remove('hidden');
+          } else {
+            el.btnPasteBulkReplace.classList.add('hidden');
+          }
+          el.pasteBulkAppendLabel.textContent = count > 0 ? `Thêm ${count} câu vào đề` : 'Thêm vào đề hiện tại';
+
+          if (count === 0) {
+            el.pastePreviewSummary.textContent = '0 câu hỏi';
+            el.pastePreviewList.innerHTML = `
+              <div class="h-full flex flex-col items-center justify-center text-center text-slate-400 py-12 px-4">
+                <i data-lucide="file-search" class="w-8 h-8 mb-2 opacity-70"></i>
+                <p class="text-xs font-medium text-slate-500">Chưa nhận diện được câu hỏi nào</p>
+                <p class="text-[11px] mt-1">Dán câu hỏi kèm A, B, C, D / a), b), c), d) / [DA: ...] hoặc chọn loại phần mặc định ở trên.</p>
+              </div>
+            `;
+            if (window.lucide) window.lucide.createIcons();
+            return;
+          }
+
+          const mcqC = parsed.questions.filter((q) => q.type === 'mcq').length;
+          const tfC = parsed.questions.filter((q) => q.type === 'tf').length;
+          const shortC = parsed.questions.filter((q) => q.type === 'short').length;
+          const essayC = parsed.questions.filter((q) => q.type === 'essay').length;
+          const errC = parsed.questions.filter((q) => getQuestionErrors(q).length > 0).length;
+
+          const summaryParts = [`${count} câu`];
+          if (mcqC) summaryParts.push(`P1:${mcqC}`);
+          if (tfC) summaryParts.push(`P2:${tfC}`);
+          if (shortC) summaryParts.push(`P3:${shortC}`);
+          if (essayC) summaryParts.push(`P4:${essayC}`);
+          if (errC > 0) summaryParts.push(`Thiếu đáp án/lỗi: ${errC}`);
+          el.pastePreviewSummary.textContent = summaryParts.join(' · ');
+
+          const partBadgeClass = {
+            mcq: 'bg-sky-50 text-sky-800 border-sky-200',
+            tf: 'bg-indigo-50 text-indigo-800 border-indigo-200',
+            short: 'bg-amber-50 text-amber-800 border-amber-200',
+            essay: 'bg-slate-100 text-slate-800 border-slate-300',
+          };
+          const partShort = {
+            mcq: 'Phần I · TN',
+            tf: 'Phần II · Đ/S',
+            short: 'Phần III · TL ngắn',
+            essay: 'Phần IV · Tự luận',
+          };
+
+          el.pastePreviewList.innerHTML = parsed.questions
+            .map((q, idx) => {
+              const errs = getQuestionErrors(q);
+              let detailHtml = '';
+              if (q.type === 'mcq') {
+                detailHtml = `<div class="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1">
+                  ${q.options
+                    .map((opt, oIdx) => {
+                      const isRight = q.correctIndex === oIdx;
+                      const letter = LETTERS_UPPER[oIdx] || String.fromCharCode(65 + oIdx);
+                      return `<div class="px-2 py-1 rounded border text-[11px] truncate ${
+                        isRight
+                          ? 'bg-emerald-50 border-emerald-400 text-emerald-900 font-semibold'
+                          : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }">${letter}. ${escapeHtml(opt.text || '(Trống)')}</div>`;
+                    })
+                    .join('')}
+                </div>`;
+              } else if (q.type === 'tf') {
+                detailHtml = `<div class="mt-1.5 space-y-1">
+                  ${q.statements
+                    .map((st, sIdx) => {
+                      const letter = LETTERS_LOWER[sIdx] || String.fromCharCode(97 + sIdx);
+                      return `<div class="flex items-center justify-between gap-2 px-2 py-1 rounded border text-[11px] ${
+                        st.isTrue ? 'bg-emerald-50/70 border-emerald-200 text-emerald-950' : 'bg-slate-50 border-slate-200 text-slate-700'
+                      }">
+                        <span class="truncate">${letter}) ${escapeHtml(st.text || '(Trống)')}</span>
+                        <span class="font-mono font-bold shrink-0 ${st.isTrue ? 'text-emerald-700' : 'text-slate-500'}">${st.isTrue ? 'Đ' : 'S'}</span>
+                      </div>`;
+                    })
+                    .join('')}
+                </div>`;
+              } else if (q.type === 'short') {
+                detailHtml = `<div class="mt-1.5 text-[11px] text-slate-600">Đáp án chuẩn: <strong class="font-mono text-emerald-700">${escapeHtml(q.shortAnswer || '(Chưa nhập)')}</strong></div>`;
+              } else if (q.shortAnswer) {
+                detailHtml = `<div class="mt-1.5 text-[11px] text-slate-500">Gợi ý: ${escapeHtml(q.shortAnswer)}</div>`;
+              }
+
+              return `
+                <div class="p-2.5 rounded-lg border ${errs.length > 0 ? 'border-rose-300 bg-rose-50/30' : 'border-slate-200 bg-white'}">
+                  <div class="flex flex-wrap items-center justify-between gap-1.5 mb-1">
+                    <div class="flex items-center gap-1.5">
+                      <span class="font-bold text-slate-900">Câu ${idx + 1}</span>
+                      <span class="px-1.5 py-0.5 rounded border text-[10px] font-semibold ${partBadgeClass[q.type]}">${partShort[q.type]}</span>
+                      ${q.fixedPosition ? '<span class="px-1 py-0.5 rounded bg-slate-100 font-mono text-[10px] text-slate-700">[CD]</span>' : ''}
+                      ${q.fixedOptions ? '<span class="px-1 py-0.5 rounded bg-slate-100 font-mono text-[10px] text-slate-700">[KDD]</span>' : ''}
+                      ${q.groupId ? '<span class="px-1 py-0.5 rounded bg-sky-50 font-mono text-[10px] text-sky-700">[Nhom]</span>' : ''}
+                    </div>
+                    ${
+                      errs.length > 0
+                        ? `<span class="text-[10px] font-semibold text-rose-600">${escapeHtml(errs[0])}</span>`
+                        : `<span class="text-[10px] font-semibold text-emerald-700">Hợp lệ</span>`
+                    }
+                  </div>
+                  <p class="text-xs text-slate-800 line-clamp-2 whitespace-pre-line">${escapeHtml(q.stem || '(Chưa có lời dẫn)')}</p>
+                  ${detailHtml}
+                </div>
+              `;
+            })
+            .join('');
+        }
+
+        function checkPartStemAutoSplit() {
+          const text = el.pastePartStem.value || '';
+          const t = pasteState.partDraft.type;
+          const looksLikeMcq = t === 'mcq' && /(?:^|\n|\s)A\s*[.):]\s+.+?(?:\n|\s)B\s*[.):]\s+/is.test(text);
+          const looksLikeTf = t === 'tf' && /(?:^|\n|\s)a\s*[.)]\s+.+?(?:\n|\s)b\s*[.)]\s+/is.test(text);
+          if (looksLikeMcq || looksLikeTf) {
+            el.pastePartStemDetectBar.classList.remove('hidden');
+          } else {
+            el.pastePartStemDetectBar.classList.add('hidden');
+          }
+        }
+
+        function renderPastePartImages() {
+          const imgs = pasteState.partDraft.stemImages || [];
+          el.pastePartImgCount.textContent = imgs.length;
+          if (imgs.length === 0) {
+            el.pastePartImagesWrap.innerHTML = '';
+            return;
+          }
+          el.pastePartImagesWrap.innerHTML = imgs
+            .map(
+              (img, idx) => `
+                <div class="inline-flex flex-col items-start gap-1 p-1.5 rounded-lg border border-slate-200 bg-slate-50">
+                  <img src="${img.previewUrl}" alt="Ảnh minh họa ${idx + 1}" class="max-h-32 rounded object-contain bg-white" />
+                  <button
+                    type="button"
+                    data-part-action="remove-image"
+                    data-img-index="${idx}"
+                    class="inline-flex items-center gap-1 px-2 py-0.5 text-[11px] font-semibold text-rose-700 bg-rose-50 border border-rose-200 rounded hover:bg-rose-100 transition-colors"
+                  >
+                    <i data-lucide="trash-2" class="w-3 h-3"></i>
+                    <span>Xóa ảnh</span>
+                  </button>
+                </div>
+              `
+            )
+            .join('');
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function renderPastePartForm() {
+          const d = pasteState.partDraft;
+          el.pastePartCd.checked = Boolean(d.fixedPosition);
+          el.pastePartKdd.checked = Boolean(d.fixedOptions);
+          if (d.type === 'short' || d.type === 'essay') {
+            el.pastePartKddWrap.classList.add('hidden');
+          } else {
+            el.pastePartKddWrap.classList.remove('hidden');
+          }
+
+          el.pastePartTypeButtons.querySelectorAll('button[data-part-type]').forEach((btn) => {
+            const btnType = btn.getAttribute('data-part-type');
+            if (btnType === d.type) {
+              btn.classList.add('bg-sky-700', 'text-white', 'border-sky-700');
+              btn.classList.remove('bg-white', 'text-slate-700', 'border-slate-200', 'hover:bg-slate-50');
+            } else {
+              btn.classList.remove('bg-sky-700', 'text-white', 'border-sky-700');
+              btn.classList.add('bg-white', 'text-slate-700', 'border-slate-200', 'hover:bg-slate-50');
+            }
+          });
+
+          if (el.pastePartStem.value !== d.stem) {
+            el.pastePartStem.value = d.stem || '';
+          }
+          checkPartStemAutoSplit();
+          renderPastePartImages();
+
+          if (d.type === 'mcq') {
+            d.options = ensureFourOptions(d.options);
+            el.pastePartAnswersWrap.innerHTML = `
+              <div class="space-y-3">
+                <div class="p-3 rounded-lg bg-sky-50/70 border border-sky-200 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs font-semibold text-sky-900">Dán nhanh cả 4 phương án A, B, C, D (tùy chọn)</span>
+                    <button
+                      type="button"
+                      data-part-action="split-quick-mcq"
+                      class="px-2.5 py-1 text-xs font-semibold text-white bg-sky-700 rounded-md hover:bg-sky-800 transition-colors"
+                    >
+                      Tách vào 4 ô bên dưới
+                    </button>
+                  </div>
+                  <textarea
+                    id="paste-part-quick-mcq"
+                    rows="2"
+                    placeholder="Dán 4 đáp án copy từ Word/Web (VD: A. ... B. ... *C. ... D. ... hoặc 4 dòng riêng) — tự động tách khi dán!"
+                    class="w-full px-2.5 py-1.5 text-xs bg-white border border-sky-200 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600"
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-800 uppercase tracking-wide mb-2">
+                    Phần 2 · 4 Phương án trả lời &amp; Chọn đáp án đúng
+                  </label>
+                  <div class="space-y-2">
+                    ${d.options
+                      .map((opt, oIdx) => {
+                        const letter = LETTERS_UPPER[oIdx];
+                        const isChecked = d.correctIndex === oIdx;
+                        return `
+                          <div class="flex items-center gap-2.5 p-2 rounded-lg border ${
+                            isChecked ? 'border-emerald-400 bg-emerald-50/50' : 'border-slate-200 bg-white'
+                          }">
+                            <input
+                              type="radio"
+                              name="paste-part-mcq-correct"
+                              data-part-action="mcq-correct"
+                              value="${oIdx}"
+                              ${isChecked ? 'checked' : ''}
+                              aria-label="Chọn đáp án ${letter} đúng"
+                              class="w-4 h-4 text-emerald-600 focus:ring-emerald-600 cursor-pointer shrink-0"
+                            />
+                            <span class="font-mono text-xs font-bold w-5 text-slate-800 shrink-0">${letter}.</span>
+                            <input
+                              type="text"
+                              data-part-action="mcq-text"
+                              data-o-index="${oIdx}"
+                              value="${escapeHtml(opt.text)}"
+                              placeholder="Dán hoặc nhập nội dung phương án ${letter}..."
+                              class="flex-1 px-2.5 py-1.5 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                            />
+                          </div>
+                        `;
+                      })
+                      .join('')}
+                  </div>
+                </div>
+              </div>
+            `;
+          } else if (d.type === 'tf') {
+            d.statements = ensureFourStatements(d.statements);
+            el.pastePartAnswersWrap.innerHTML = `
+              <div class="space-y-3">
+                <div class="p-3 rounded-lg bg-sky-50/70 border border-sky-200 space-y-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2">
+                    <span class="text-xs font-semibold text-sky-900">Dán nhanh 4 ý a), b), c), d) (tùy chọn)</span>
+                    <button
+                      type="button"
+                      data-part-action="split-quick-tf"
+                      class="px-2.5 py-1 text-xs font-semibold text-white bg-sky-700 rounded-md hover:bg-sky-800 transition-colors"
+                    >
+                      Tách vào 4 ô bên dưới
+                    </button>
+                  </div>
+                  <textarea
+                    id="paste-part-quick-tf"
+                    rows="2"
+                    placeholder="Dán 4 ý Đúng/Sai từ Word/Web (hỗ trợ [Đ]/[S] hoặc gạch chân/màu đỏ từ Word)..."
+                    class="w-full px-2.5 py-1.5 text-xs bg-white border border-sky-200 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-600"
+                  ></textarea>
+                </div>
+
+                <div>
+                  <label class="block text-xs font-bold text-slate-800 uppercase tracking-wide mb-2">
+                    Phần 2 · 4 Ý Đúng / Sai (a, b, c, d)
+                  </label>
+                  <div class="space-y-2">
+                    ${d.statements
+                      .map((st, sIdx) => {
+                        const letter = LETTERS_LOWER[sIdx];
+                        return `
+                          <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 p-2 rounded-lg border ${
+                            st.isTrue ? 'border-emerald-300 bg-emerald-50/40' : 'border-slate-200 bg-white'
+                          }">
+                            <div class="flex items-center gap-2 flex-1 min-w-0">
+                              <span class="font-mono text-xs font-bold w-6 text-slate-800 shrink-0">${letter})</span>
+                              <input
+                                type="text"
+                                data-part-action="tf-text"
+                                data-s-index="${sIdx}"
+                                value="${escapeHtml(st.text)}"
+                                placeholder="Dán hoặc nhập nội dung ý ${letter})..."
+                                class="flex-1 px-2.5 py-1.5 text-sm border border-slate-300 rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                              />
+                            </div>
+                            <div class="flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg shrink-0 self-end sm:self-center">
+                              <button
+                                type="button"
+                                data-part-action="tf-toggle"
+                                data-s-index="${sIdx}"
+                                data-val="true"
+                                class="px-2.5 py-1 text-xs font-semibold rounded-md transition-colors whitespace-nowrap ${
+                                  st.isTrue ? 'bg-emerald-600 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                                }"
+                              >
+                                Đúng (Đ)
+                              </button>
+                              <button
+                                type="button"
+                                data-part-action="tf-toggle"
+                                data-s-index="${sIdx}"
+                                data-val="false"
+                                class="px-2.5 py-1 text-xs font-semibold rounded-md transition-colors whitespace-nowrap ${
+                                  !st.isTrue ? 'bg-slate-700 text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'
+                                }"
+                              >
+                                Sai (S)
+                              </button>
+                            </div>
+                          </div>
+                        `;
+                      })
+                      .join('')}
+                  </div>
+                </div>
+              </div>
+            `;
+          } else if (d.type === 'short') {
+            el.pastePartAnswersWrap.innerHTML = `
+              <div>
+                <label for="paste-part-short-ans" class="block text-xs font-bold text-slate-800 uppercase tracking-wide mb-2">
+                  Phần 2 · Đáp án Trả lời ngắn chuẩn
+                </label>
+                <input
+                  id="paste-part-short-ans"
+                  type="text"
+                  data-part-action="short-answer"
+                  value="${escapeHtml(d.shortAnswer)}"
+                  placeholder="Ví dụ: -1,25 hoặc 2025"
+                  class="w-full sm:max-w-sm px-3 py-2 text-sm font-mono tabular-nums bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                />
+              </div>
+            `;
+          } else {
+            el.pastePartAnswersWrap.innerHTML = `
+              <div>
+                <label for="paste-part-short-ans" class="block text-xs font-bold text-slate-800 uppercase tracking-wide mb-2">
+                  Phần 2 · Gợi ý chấm / Thang điểm tự luận (tùy chọn)
+                </label>
+                <textarea
+                  id="paste-part-short-ans"
+                  rows="2"
+                  data-part-action="short-answer"
+                  placeholder="Dán hướng dẫn chấm hoặc để trống nếu chấm tự do..."
+                  class="w-full px-3 py-2 text-sm bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600 focus:border-sky-600"
+                >${escapeHtml(d.shortAnswer)}</textarea>
+              </div>
+            `;
+          }
+        }
+
+        function resetPartDraft(keepType = true) {
+          const prevType = keepType ? pasteState.partDraft.type : 'mcq';
+          pasteState.partDraft = createBlankQuestion(prevType);
+          el.pastePartStem.value = '';
+          renderPastePartForm();
+        }
+
+        function openPasteModal(defaultTab = 'bulk', defaultType = null) {
+          if (state.editingId) commitEditDraft();
+          if (defaultType && ['mcq', 'tf', 'short', 'essay'].includes(defaultType)) {
+            pasteState.partDraft = createBlankQuestion(defaultType);
+          }
+          el.pasteImportModal.classList.remove('hidden');
+          setPasteModalTab(defaultTab);
+          if (defaultTab === 'bulk') {
+            updateBulkPastePreview();
+            setTimeout(() => el.pasteBulkTextarea.focus(), 30);
+          } else {
+            setTimeout(() => el.pastePartStem.focus(), 30);
+          }
+          if (window.lucide) window.lucide.createIcons();
+        }
+
+        function closePasteModal() {
+          el.pasteImportModal.classList.add('hidden');
+        }
+
+        function commitBulkPaste(mode) {
+          const parsed = pasteState.parsedBulk;
+          if (!parsed || parsed.questions.length === 0) return;
+
+          if (mode === 'replace') {
+            state.questions = parsed.questions.map((q) => cloneQuestion(q, makeUid()));
+            state.groups = { ...parsed.groups };
+            if (!state.fileName) state.fileName = 'De_Dan_Azota.docx';
+            state.sectionTab = 'all';
+            state.onlyErrors = false;
+            closePasteModal();
+            renderAll();
+            showAlert(
+              'success',
+              `Đã nạp ${state.questions.length} câu hỏi từ trình dán Azota`,
+              'Đề gốc đã được cập nhật và tự động phân loại theo Phần I–IV.'
+            );
+            return;
+          }
+
+          // Append mode: remap groupIds so they never collide with existing state.groups
+          const groupIdMap = {};
+          const groupPrefix = `GP${Date.now()}_`;
+          Object.keys(parsed.groups || {}).forEach((oldId) => {
+            const newId = groupPrefix + oldId;
+            groupIdMap[oldId] = newId;
+            state.groups[newId] = {
+              id: newId,
+              introParagraphs: (parsed.groups[oldId].introParagraphs || []).map((p) => ({
+                text: p.text,
+                images: p.images ? [...p.images] : [],
+              })),
+            };
+          });
+
+          const added = parsed.questions.map((q) => {
+            const cloned = cloneQuestion(q, makeUid());
+            cloned.originalNumber = null;
+            if (cloned.groupId && groupIdMap[cloned.groupId]) {
+              cloned.groupId = groupIdMap[cloned.groupId];
+            }
+            return cloned;
+          });
+
+          state.questions.push(...added);
+          if (!state.fileName) state.fileName = 'De_Dan_Azota.docx';
+          state.onlyErrors = false;
+          closePasteModal();
+          renderAll();
+          showAlert(
+            'success',
+            `Đã thêm ${added.length} câu hỏi vào đề`,
+            `Tổng số câu hiện tại: ${state.questions.length} câu.`
+          );
+        }
+
+        function commitPartDraft(closeAfter) {
+          const d = pasteState.partDraft;
+          if (!d.stem.trim() && (d.stemImages || []).length === 0) {
+            showAlert('warning', 'Chưa có nội dung câu hỏi', 'Vui lòng nhập hoặc dán lời dẫn (hoặc đính kèm ảnh) cho câu hỏi.');
+            el.pastePartStem.focus();
+            return;
+          }
+
+          const newQ = cloneQuestion(d, makeUid());
+          newQ.originalNumber = null;
+          if (newQ.type === 'mcq') {
+            newQ.options = ensureFourOptions(newQ.options);
+            newQ.section = 1;
+          } else if (newQ.type === 'tf') {
+            newQ.statements = ensureFourStatements(newQ.statements);
+            newQ.section = 2;
+          } else if (newQ.type === 'short') {
+            newQ.section = 3;
+          } else {
+            newQ.section = 4;
+          }
+
+          state.questions.push(newQ);
+          if (!state.fileName) state.fileName = 'De_Nhap_Tay_Azota.docx';
+          state.onlyErrors = false;
+          if (state.sectionTab !== 'all' && state.sectionTab !== newQ.type) {
+            state.sectionTab = newQ.type;
+          }
+          renderAll();
+
+          if (closeAfter) {
+            closePasteModal();
+            showAlert('success', 'Đã thêm câu hỏi vào đề', `Tổng số câu hiện tại: ${state.questions.length} câu.`);
+          } else {
+            resetPartDraft(true);
+            el.pastePartStem.focus();
+            showAlert('success', 'Đã lưu câu vừa nhập', 'Bạn có thể dán tiếp câu hỏi kế tiếp ngay bên dưới.');
+          }
+        }
+
+        // Open / Close Modal triggers
+        el.btnOpenPasteLeft.addEventListener('click', () => openPasteModal('bulk'));
+        el.btnOpenPasteToolbar.addEventListener('click', () => openPasteModal('bulk'));
+        el.btnOpenPasteEmpty.addEventListener('click', () => openPasteModal('bulk'));
+        el.btnClosePasteModal.addEventListener('click', closePasteModal);
+        el.btnPasteCancelBulk.addEventListener('click', closePasteModal);
+        el.btnPasteCancelParts.addEventListener('click', closePasteModal);
+        el.pasteImportModal.addEventListener('click', (e) => {
+          if (e.target === el.pasteImportModal) closePasteModal();
+        });
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && !el.pasteImportModal.classList.contains('hidden')) {
+            closePasteModal();
+          }
+        });
+
+        // Switch tabs inside Paste Modal
+        el.pasteTabBulk.addEventListener('click', () => setPasteModalTab('bulk'));
+        el.pasteTabParts.addEventListener('click', () => setPasteModalTab('parts'));
+
+        // Bulk Paste controls & Live Preview
+        let bulkPreviewTimer = null;
+        const scheduleBulkPreview = () => {
+          clearTimeout(bulkPreviewTimer);
+          bulkPreviewTimer = setTimeout(updateBulkPastePreview, 100);
+        };
+        el.pasteBulkTextarea.addEventListener('input', scheduleBulkPreview);
+        el.pasteBulkDefaultType.addEventListener('change', updateBulkPastePreview);
+
+        // Word/Google Docs HTML paste interceptor for Bulk Textarea
+        el.pasteBulkTextarea.addEventListener('paste', (e) => {
+          const html = e.clipboardData ? e.clipboardData.getData('text/html') : '';
+          if (!html) return;
+          const extracted = extractAzotaTextFromClipboardHtml(html);
+          if (extracted && extracted.detectedFormatMark) {
+            e.preventDefault();
+            const ta = el.pasteBulkTextarea;
+            const start = ta.selectionStart || 0;
+            const end = ta.selectionEnd || 0;
+            ta.setRangeText(extracted.text, start, end, 'end');
+            updateBulkPastePreview();
+          }
+        });
+
+        // Quick snippets in Bulk Tab
+        el.pastePanelBulk.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-insert-snippet]');
+          if (!btn) return;
+          const key = btn.getAttribute('data-insert-snippet');
+          const snippet = PASTE_SNIPPETS[key];
+          if (!snippet) return;
+          const ta = el.pasteBulkTextarea;
+          const start = ta.selectionStart || ta.value.length;
+          const end = ta.selectionEnd || ta.value.length;
+          ta.setRangeText(snippet, start, end, 'end');
+          ta.focus();
+          updateBulkPastePreview();
+        });
+
+        el.btnPasteBulkSample.addEventListener('click', () => {
+          el.pasteBulkTextarea.value = PASTE_SAMPLE_TEXT;
+          el.pasteBulkDefaultType.value = '0';
+          updateBulkPastePreview();
+        });
+        el.btnPasteBulkClear.addEventListener('click', () => {
+          el.pasteBulkTextarea.value = '';
+          updateBulkPastePreview();
+          el.pasteBulkTextarea.focus();
+        });
+        el.btnPasteBulkAppend.addEventListener('click', () => commitBulkPaste('append'));
+        el.btnPasteBulkReplace.addEventListener('click', () => commitBulkPaste('replace'));
+
+        // Structured Per-Part Paste controls
+        el.pastePartTypeButtons.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-part-type]');
+          if (!btn) return;
+          const newType = btn.getAttribute('data-part-type');
+          if (!newType || newType === pasteState.partDraft.type) return;
+          convertQuestionType(pasteState.partDraft, newType);
+          renderPastePartForm();
+        });
+        el.pastePartCd.addEventListener('change', (e) => {
+          pasteState.partDraft.fixedPosition = e.target.checked;
+        });
+        el.pastePartKdd.addEventListener('change', (e) => {
+          pasteState.partDraft.fixedOptions = e.target.checked;
+        });
+        el.pastePartStem.addEventListener('input', (e) => {
+          pasteState.partDraft.stem = e.target.value;
+          checkPartStemAutoSplit();
+        });
+
+        // Word HTML normalization when pasting into Stem in Tab 2
+        el.pastePartStem.addEventListener('paste', (e) => {
+          const html = e.clipboardData ? e.clipboardData.getData('text/html') : '';
+          if (!html) return;
+          const extracted = extractAzotaTextFromClipboardHtml(html);
+          if (extracted && extracted.detectedFormatMark) {
+            e.preventDefault();
+            const ta = el.pastePartStem;
+            ta.setRangeText(extracted.text, ta.selectionStart || 0, ta.selectionEnd || 0, 'end');
+            pasteState.partDraft.stem = ta.value;
+            checkPartStemAutoSplit();
+          }
+        });
+
+        // 1-click Auto-Split Stem + Options inside Tab 2
+        el.btnPastePartAutosplitStem.addEventListener('click', () => {
+          const parsed = parseRawTextToQuestions(el.pastePartStem.value, pasteState.partDraft.type === 'tf' ? 2 : 1);
+          if (parsed.questions.length > 0) {
+            const first = parsed.questions[0];
+            pasteState.partDraft.stem = first.stem || '';
+            el.pastePartStem.value = pasteState.partDraft.stem;
+            if (first.type === 'mcq' && pasteState.partDraft.type === 'mcq') {
+              pasteState.partDraft.options = ensureFourOptions(first.options);
+              if (first.correctIndex !== null && first.correctIndex !== undefined) {
+                pasteState.partDraft.correctIndex = first.correctIndex;
+              }
+            } else if (first.type === 'tf' && pasteState.partDraft.type === 'tf') {
+              pasteState.partDraft.statements = ensureFourStatements(first.statements);
+            }
+            if (first.fixedPosition) pasteState.partDraft.fixedPosition = true;
+            if (first.fixedOptions) pasteState.partDraft.fixedOptions = true;
+            renderPastePartForm();
+          }
+        });
+
+        // Upload & Ctrl+V image paste inside Tab 2
+        el.pastePartUploadImg.addEventListener('change', async (e) => {
+          const files = Array.from(e.target.files || []);
+          for (const f of files) {
+            if (!f.type.startsWith('image/')) continue;
+            try {
+              const imgObj = await fileOrBlobToImageObj(f);
+              pasteState.partDraft.stemImages.push(imgObj);
+            } catch (err) {
+              showAlert('error', 'Không thể thêm ảnh', err.message || 'Lỗi đọc tệp ảnh.');
+            }
+          }
+          e.target.value = '';
+          renderPastePartImages();
+        });
+
+        el.pastePanelParts.addEventListener('paste', async (e) => {
+          const items = e.clipboardData && e.clipboardData.items ? Array.from(e.clipboardData.items) : [];
+          const imageItems = items.filter((it) => it.type && it.type.startsWith('image/'));
+          if (imageItems.length === 0) return;
+
+          e.preventDefault();
+          for (const item of imageItems) {
+            const blob = item.getAsFile();
+            if (!blob) continue;
+            try {
+              const imgObj = await fileOrBlobToImageObj(blob);
+              pasteState.partDraft.stemImages.push(imgObj);
+            } catch (err) {
+              showAlert('error', 'Không thể dán ảnh', err.message || 'Lỗi xử lý ảnh từ clipboard.');
+            }
+          }
+          renderPastePartImages();
+        });
+
+        el.pastePartImagesWrap.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-part-action="remove-image"]');
+          if (!btn) return;
+          const idx = parseInt(btn.getAttribute('data-img-index'), 10);
+          if (!Number.isNaN(idx) && pasteState.partDraft.stemImages) {
+            pasteState.partDraft.stemImages.splice(idx, 1);
+            renderPastePartImages();
+          }
+        });
+
+        // Delegate events inside Answers Wrap in Tab 2
+        el.pastePartAnswersWrap.addEventListener('click', (e) => {
+          const btn = e.target.closest('button[data-part-action]');
+          if (!btn) return;
+          const action = btn.getAttribute('data-part-action');
+
+          if (action === 'split-quick-mcq') {
+            const box = document.getElementById('paste-part-quick-mcq');
+            const res = splitQuickOptionsBlock(box ? box.value : '', 'mcq');
+            if (res) {
+              pasteState.partDraft.options = res.options;
+              if (res.correctIndex !== null) pasteState.partDraft.correctIndex = res.correctIndex;
+              renderPastePartForm();
+            }
+            return;
+          }
+
+          if (action === 'split-quick-tf') {
+            const box = document.getElementById('paste-part-quick-tf');
+            const res = splitQuickOptionsBlock(box ? box.value : '', 'tf');
+            if (res) {
+              pasteState.partDraft.statements = res.statements;
+              renderPastePartForm();
+            }
+            return;
+          }
+
+          if (action === 'tf-toggle') {
+            const sIdx = parseInt(btn.getAttribute('data-s-index'), 10);
+            const val = btn.getAttribute('data-val') === 'true';
+            pasteState.partDraft.statements = ensureFourStatements(pasteState.partDraft.statements);
+            if (pasteState.partDraft.statements[sIdx]) {
+              pasteState.partDraft.statements[sIdx].isTrue = val;
+              pasteState.partDraft.statements[sIdx].detectedBy = 'manual';
+              renderPastePartForm();
+            }
+          }
+        });
+
+        el.pastePartAnswersWrap.addEventListener('input', (e) => {
+          const target = e.target;
+          const action = target.getAttribute('data-part-action');
+          if (action === 'mcq-text') {
+            const oIdx = parseInt(target.getAttribute('data-o-index'), 10);
+            pasteState.partDraft.options = ensureFourOptions(pasteState.partDraft.options);
+            if (pasteState.partDraft.options[oIdx]) pasteState.partDraft.options[oIdx].text = target.value;
+          } else if (action === 'tf-text') {
+            const sIdx = parseInt(target.getAttribute('data-s-index'), 10);
+            pasteState.partDraft.statements = ensureFourStatements(pasteState.partDraft.statements);
+            if (pasteState.partDraft.statements[sIdx]) pasteState.partDraft.statements[sIdx].text = target.value;
+          } else if (action === 'short-answer') {
+            pasteState.partDraft.shortAnswer = target.value;
+          }
+        });
+
+        el.pastePartAnswersWrap.addEventListener('change', (e) => {
+          const target = e.target;
+          if (target.getAttribute('data-part-action') === 'mcq-correct') {
+            pasteState.partDraft.correctIndex = parseInt(target.value, 10);
+            renderPastePartForm();
+          }
+        });
+
+        // Auto-split when pasting directly into Quick-Options box (supports Word HTML underline/red too!)
+        el.pastePartAnswersWrap.addEventListener('paste', (e) => {
+          const target = e.target;
+          if (!target || (target.id !== 'paste-part-quick-mcq' && target.id !== 'paste-part-quick-tf')) return;
+          const html = e.clipboardData ? e.clipboardData.getData('text/html') : '';
+          const plain = e.clipboardData ? e.clipboardData.getData('text/plain') : '';
+          let textToParse = plain;
+          if (html) {
+            const extracted = extractAzotaTextFromClipboardHtml(html);
+            if (extracted && extracted.detectedFormatMark) {
+              textToParse = extracted.text;
+            }
+          }
+          if (!textToParse) return;
+          e.preventDefault();
+          target.value = textToParse;
+          if (target.id === 'paste-part-quick-mcq') {
+            const res = splitQuickOptionsBlock(textToParse, 'mcq');
+            if (res) {
+              pasteState.partDraft.options = res.options;
+              if (res.correctIndex !== null) pasteState.partDraft.correctIndex = res.correctIndex;
+              renderPastePartForm();
+            }
+          } else {
+            const res = splitQuickOptionsBlock(textToParse, 'tf');
+            if (res) {
+              pasteState.partDraft.statements = res.statements;
+              renderPastePartForm();
+            }
+          }
+        });
+
+        el.btnPastePartReset.addEventListener('click', () => {
+          resetPartDraft(true);
+          el.pastePartStem.focus();
+        });
+        el.btnPastePartSaveNext.addEventListener('click', () => commitPartDraft(false));
+        el.btnPastePartSaveClose.addEventListener('click', () => commitPartDraft(true));
 
         el.codeModeAuto.addEventListener('click', () => setCodeMode('auto'));
         el.codeModeCustom.addEventListener('click', () => setCodeMode('custom'));
