@@ -538,6 +538,8 @@
             </div>
           </div>
 
+          <div id="question-workspace" class="grid min-h-0 grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
+            <div class="min-w-0">
           <!-- Empty State -->
           <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-10 text-center">
             <div class="w-14 h-14 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center mb-4">
@@ -629,7 +631,21 @@
           </div>
 
           <!-- Questions Container -->
-          <div id="questions-list" class="hidden divide-y divide-slate-200"></div>
+          <div id="questions-list" class="hidden max-h-[calc(100vh-360px)] overflow-y-auto divide-y divide-slate-200"></div>
+            </div>
+
+            <aside id="question-edit-pane" class="hidden min-w-0 border-t border-slate-200 bg-slate-50/70 xl:border-l xl:border-t-0">
+              <div id="question-edit-content" class="max-h-[calc(100vh-360px)] min-h-[420px] overflow-y-auto p-3">
+                <div class="flex min-h-[390px] flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+                  <i data-lucide="mouse-pointer-2" class="mb-3 h-6 w-6 text-slate-400"></i>
+                  <h2 class="text-sm font-semibold text-slate-800">Chọn câu hỏi để chỉnh sửa</h2>
+                  <p class="mt-1.5 max-w-xs text-xs leading-relaxed text-slate-500">
+                    Chọn “Sửa nội dung” trên câu hỏi bên trái. Các thay đổi sẽ cập nhật ngay vào phần xem trước.
+                  </p>
+                </div>
+              </div>
+            </aside>
+          </div>
         </section>
       </div>
     </main>
@@ -1049,6 +1065,7 @@ A. ...   B. ...   C. ...   D. ...
           isExporting: false,
           editingId: null,   // Currently edited question id
           editDraft: null,   // Deep clone draft while editing
+          editOriginal: null,
           pendingDeleteId: null,
           codeMode: 'auto',  // 'auto' | 'custom'
         };
@@ -1104,7 +1121,10 @@ A. ...   B. ...   C. ...   D. ...
           filteredEmptyTitle: document.getElementById('filtered-empty-title'),
           filteredEmptyDesc: document.getElementById('filtered-empty-desc'),
           filteredEmptyAddWrap: document.getElementById('filtered-empty-add-wrap'),
+          questionWorkspace: document.getElementById('question-workspace'),
           questionsList: document.getElementById('questions-list'),
+          questionEditPane: document.getElementById('question-edit-pane'),
+          questionEditContent: document.getElementById('question-edit-content'),
           confirmDeleteModal: document.getElementById('confirm-delete-modal'),
           confirmDeleteDesc: document.getElementById('confirm-delete-desc'),
           btnCancelDelete: document.getElementById('btn-cancel-delete'),
@@ -3146,6 +3166,7 @@ A. ...   B. ...   C. ...   D. ...
           state.onlyErrors = false;
           state.editingId = null;
           state.editDraft = null;
+          state.editOriginal = null;
           state.pendingDeleteId = null;
 
           renderAll();
@@ -4338,6 +4359,7 @@ A. ...   B. ...   C. ...   D. ...
           if (idx === -1) {
             state.editingId = null;
             state.editDraft = null;
+            state.editOriginal = null;
             return false;
           }
           const committed = cloneQuestion(state.editDraft);
@@ -4358,7 +4380,16 @@ A. ...   B. ...   C. ...   D. ...
           state.questions[idx] = committed;
           state.editingId = null;
           state.editDraft = null;
+          state.editOriginal = null;
           return true;
+        }
+
+        function syncEditDraftToPreview() {
+          if (!state.editingId || !state.editDraft) return;
+          const idx = state.questions.findIndex((q) => q.id === state.editingId);
+          if (idx === -1) return;
+          state.questions[idx] = { ...state.editDraft };
+          renderQuestions({ preserveEditor: true });
         }
 
         async function buildEditedSourceDocxBlob(questions, groups) {
@@ -4721,6 +4752,18 @@ A. ...   B. ...   C. ...   D. ...
           `;
         }
 
+        function renderQuestionEditPlaceholder() {
+          return `
+            <div class="flex min-h-[390px] flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
+              <i data-lucide="mouse-pointer-2" class="mb-3 h-6 w-6 text-slate-400"></i>
+              <h2 class="text-sm font-semibold text-slate-800">Chọn câu hỏi để chỉnh sửa</h2>
+              <p class="mt-1.5 max-w-xs text-xs leading-relaxed text-slate-500">
+                Chọn “Sửa nội dung” trên câu hỏi bên trái. Các thay đổi sẽ cập nhật ngay vào phần xem trước.
+              </p>
+            </div>
+          `;
+        }
+
         function renderEditCardHtml(draft, partQuestionNum) {
           const imgsHtml = (draft.stemImages || [])
             .map(
@@ -4873,10 +4916,14 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           return `
-            <article class="p-5 bg-sky-50/40 border-2 border-sky-300 rounded-lg m-3" data-edit-card="true">
+            <article class="p-4 bg-sky-50/40 border-2 border-sky-300 rounded-lg" data-edit-card="true">
               <div class="flex flex-wrap items-center justify-between gap-3 pb-3 mb-3 border-b border-sky-200/80">
-                <div class="flex items-center gap-2.5">
+                <div class="flex flex-wrap items-center gap-2.5">
                   <span class="text-sm font-bold text-sky-900">Đang chỉnh sửa Câu ${partQuestionNum}</span>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-1 text-[10px] font-medium text-emerald-700">
+                    <i data-lucide="radio" class="h-3 w-3"></i>
+                    Xem trước trực tiếp
+                  </span>
                   <select
                     data-action="draft-change-type"
                     aria-label="Chuyển dạng thức câu hỏi"
@@ -4991,7 +5038,8 @@ A. ...   B. ...   C. ...   D. ...
           `;
         }
 
-        function renderQuestions() {
+        function renderQuestions(options = {}) {
+          const preserveEditor = options.preserveEditor === true;
           const allCount = state.questions.length;
           const mcqCount = state.questions.filter((q) => q.type === 'mcq').length;
           const tfCount = state.questions.filter((q) => q.type === 'tf').length;
@@ -5035,9 +5083,13 @@ A. ...   B. ...   C. ...   D. ...
             el.filteredEmptyState.classList.add('hidden');
             el.questionsList.classList.add('hidden');
             el.questionsList.innerHTML = '';
+            el.questionEditPane.classList.add('hidden');
+            if (!preserveEditor) el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
+            if (window.lucide) window.lucide.createIcons();
             return;
           }
 
+          el.questionEditPane.classList.remove('hidden');
           const parts = [
             `<span>Tổng: <strong class="text-slate-800">${allCount}</strong> câu</span>`,
             `<span aria-hidden="true">·</span>`,
@@ -5095,6 +5147,10 @@ A. ...   B. ...   C. ...   D. ...
                   <span>+ Thêm câu hỏi mới (${SECTION_META[targetSec].shortLabel})</span>
                 </button>
               `;
+              if (window.lucide) window.lucide.createIcons();
+            }
+            if (!preserveEditor) {
+              el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
               if (window.lucide) window.lucide.createIcons();
             }
             return;
@@ -5165,12 +5221,6 @@ A. ...   B. ...   C. ...   D. ...
                     </div>
                   `);
                 }
-              }
-
-              // Render Edit Mode if this card is active
-              if (state.editingId === q.id && state.editDraft) {
-                htmlChunks.push(renderEditCardHtml(state.editDraft, partQuestionNum));
-                return;
               }
 
               const errors = getQuestionErrors(q);
@@ -5468,8 +5518,21 @@ A. ...   B. ...   C. ...   D. ...
           el.questionsList.innerHTML = htmlChunks.join('');
           if (window.lucide) window.lucide.createIcons();
 
-          // Auto-resize active editor textarea if open
-          const activeTa = el.questionsList.querySelector('textarea[data-action="draft-stem"]');
+          if (!preserveEditor) {
+            const activeQuestion = state.questions.find((q) => q.id === state.editingId);
+            if (activeQuestion && state.editDraft) {
+              const sectionQuestions = state.questions.filter((q) => q.type === activeQuestion.type);
+              el.questionEditContent.innerHTML = renderEditCardHtml(
+                state.editDraft,
+                sectionQuestions.indexOf(activeQuestion) + 1,
+              );
+            } else {
+              el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
+            }
+            if (window.lucide) window.lucide.createIcons();
+          }
+
+          const activeTa = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
           if (activeTa) autoResizeTextarea(activeTa);
         }
 
@@ -5522,10 +5585,11 @@ A. ...   B. ...   C. ...   D. ...
           }
           state.editingId = newQ.id;
           state.editDraft = cloneQuestion(newQ);
+          state.editOriginal = cloneQuestion(newQ);
           renderAll();
 
           setTimeout(() => {
-            const ta = el.questionsList.querySelector('textarea[data-action="draft-stem"]');
+            const ta = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
             if (ta) {
               ta.focus();
               ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -5568,6 +5632,7 @@ A. ...   B. ...   C. ...   D. ...
           state.onlyErrors = false;
           state.editingId = null;
           state.editDraft = null;
+          state.editOriginal = null;
           state.pendingDeleteId = null;
           hideAlert();
           renderAll();
@@ -5580,18 +5645,6 @@ A. ...   B. ...   C. ...   D. ...
         el.btnLoadSampleDirect.addEventListener('click', handleLoadSampleDirectly);
         el.btnEmptyLoadSample.addEventListener('click', handleLoadSampleDirectly);
         el.btnExportEditedSource.addEventListener('click', handleExportEditedSourceDocx);
-
-        // Add new question buttons inside EmptyState & FilteredEmptyState
-        el.emptyState.addEventListener('click', (e) => {
-          const btn = e.target.closest('button[data-action="add-new-question"]');
-          if (!btn) return;
-          addNewQuestionToSection(btn.getAttribute('data-type') || 'mcq');
-        });
-        el.filteredEmptyState.addEventListener('click', (e) => {
-          const btn = e.target.closest('button[data-action="add-new-question"]');
-          if (!btn) return;
-          addNewQuestionToSection(btn.getAttribute('data-type') || 'mcq');
-        });
 
         // Section Tabs & Error filter
         document.querySelectorAll('.section-tab').forEach((btn) => {
@@ -5638,6 +5691,7 @@ A. ...   B. ...   C. ...   D. ...
             if (state.editingId === state.pendingDeleteId) {
               state.editingId = null;
               state.editDraft = null;
+              state.editOriginal = null;
             }
             state.questions = state.questions.filter((q) => q.id !== state.pendingDeleteId);
             closeDeleteModal();
@@ -5647,7 +5701,7 @@ A. ...   B. ...   C. ...   D. ...
         });
 
         // Interactive Question Editing & CRUD via Event Delegation
-        el.questionsList.addEventListener('click', (e) => {
+        el.questionWorkspace.addEventListener('click', (e) => {
           const actionBtn = e.target.closest('button[data-action]');
           if (!actionBtn) return;
           const action = actionBtn.getAttribute('data-action');
@@ -5664,9 +5718,10 @@ A. ...   B. ...   C. ...   D. ...
             if (!target) return;
             state.editingId = qId;
             state.editDraft = cloneQuestion(target);
+            state.editOriginal = cloneQuestion(target);
             renderQuestions();
             setTimeout(() => {
-              const ta = el.questionsList.querySelector('textarea[data-action="draft-stem"]');
+              const ta = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
               if (ta) {
                 autoResizeTextarea(ta);
                 ta.focus();
@@ -5676,8 +5731,13 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           if (action === 'cancel-edit') {
+            const originalIndex = state.questions.findIndex((q) => q.id === state.editingId);
+            if (originalIndex !== -1 && state.editOriginal) {
+              state.questions[originalIndex] = cloneQuestion(state.editOriginal);
+            }
             state.editingId = null;
             state.editDraft = null;
+            state.editOriginal = null;
             renderQuestions();
             return;
           }
@@ -5693,6 +5753,7 @@ A. ...   B. ...   C. ...   D. ...
             const imgIdx = parseInt(actionBtn.getAttribute('data-img-index'), 10);
             if (!Number.isNaN(imgIdx) && state.editDraft.stemImages) {
               state.editDraft.stemImages.splice(imgIdx, 1);
+              syncEditDraftToPreview();
               renderQuestions();
             }
             return;
@@ -5706,6 +5767,7 @@ A. ...   B. ...   C. ...   D. ...
             if (state.editDraft.statements[sIdx]) {
               state.editDraft.statements[sIdx].isTrue = val;
               state.editDraft.statements[sIdx].detectedBy = 'manual';
+              syncEditDraftToPreview();
               renderQuestions();
             }
             return;
@@ -5758,29 +5820,33 @@ A. ...   B. ...   C. ...   D. ...
           }
         });
 
-        el.questionsList.addEventListener('input', (e) => {
+        el.questionWorkspace.addEventListener('input', (e) => {
           const target = e.target;
           const action = target.getAttribute('data-action');
 
           if (action === 'draft-stem' && state.editDraft) {
             state.editDraft.stem = target.value;
             autoResizeTextarea(target);
+            syncEditDraftToPreview();
             return;
           }
           if (action === 'draft-mcq-text' && state.editDraft) {
             const oIdx = parseInt(target.getAttribute('data-o-index'), 10);
             state.editDraft.options = ensureFourOptions(state.editDraft.options);
             if (state.editDraft.options[oIdx]) state.editDraft.options[oIdx].text = target.value;
+            syncEditDraftToPreview();
             return;
           }
           if (action === 'draft-tf-text' && state.editDraft) {
             const sIdx = parseInt(target.getAttribute('data-s-index'), 10);
             state.editDraft.statements = ensureFourStatements(state.editDraft.statements);
             if (state.editDraft.statements[sIdx]) state.editDraft.statements[sIdx].text = target.value;
+            syncEditDraftToPreview();
             return;
           }
           if (action === 'draft-short-answer' && state.editDraft) {
             state.editDraft.shortAnswer = target.value;
+            syncEditDraftToPreview();
             return;
           }
 
@@ -5794,7 +5860,7 @@ A. ...   B. ...   C. ...   D. ...
           }
         });
 
-        el.questionsList.addEventListener('change', async (e) => {
+        el.questionWorkspace.addEventListener('change', async (e) => {
           const target = e.target;
           const action = target.getAttribute('data-action');
 
@@ -5811,6 +5877,7 @@ A. ...   B. ...   C. ...   D. ...
               }
             }
             target.value = '';
+            syncEditDraftToPreview();
             renderQuestions();
             return;
           }
@@ -5818,22 +5885,26 @@ A. ...   B. ...   C. ...   D. ...
           if (action === 'draft-mcq-correct' && state.editDraft) {
             state.editDraft.correctIndex = parseInt(target.value, 10);
             state.editDraft.detectedBy = 'manual';
+            syncEditDraftToPreview();
             renderQuestions();
             return;
           }
 
           if (action === 'draft-change-type' && state.editDraft) {
             convertQuestionType(state.editDraft, target.value);
+            syncEditDraftToPreview();
             renderQuestions();
             return;
           }
 
           if (action === 'draft-toggle-cd' && state.editDraft) {
             state.editDraft.fixedPosition = target.checked;
+            syncEditDraftToPreview();
             return;
           }
           if (action === 'draft-toggle-kdd' && state.editDraft) {
             state.editDraft.fixedOptions = target.checked;
+            syncEditDraftToPreview();
             return;
           }
 
@@ -5865,7 +5936,7 @@ A. ...   B. ...   C. ...   D. ...
         });
 
         // Support pasting images via Ctrl+V while inside Edit Mode
-        el.questionsList.addEventListener('paste', async (e) => {
+        el.questionEditContent.addEventListener('paste', async (e) => {
           if (!state.editingId || !state.editDraft) return;
           const items = e.clipboardData && e.clipboardData.items ? Array.from(e.clipboardData.items) : [];
           const imageItems = items.filter((it) => it.type && it.type.startsWith('image/'));
@@ -5882,6 +5953,7 @@ A. ...   B. ...   C. ...   D. ...
               showAlert('error', 'Không thể dán ảnh', err.message || 'Lỗi xử lý ảnh từ clipboard.');
             }
           }
+          syncEditDraftToPreview();
           renderQuestions();
         });
 
