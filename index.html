@@ -56,6 +56,11 @@
         border-color: #0284c7 !important;
         background-color: #f0f9ff !important;
       }
+      @media (min-width: 1280px) {
+        #question-workspace.editor-active {
+          grid-template-columns: minmax(0, 1.05fr) minmax(360px, 0.95fr);
+        }
+      }
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -142,9 +147,9 @@
       </div>
 
       <!-- Two-Column Workspace -->
-      <div class="grid grid-cols-1 lg:grid-cols-[410px_1fr] gap-6 items-start">
+      <div id="workspace-grid" class="grid grid-cols-1 lg:grid-cols-[410px_1fr] gap-6 items-start">
         <!-- LEFT COLUMN: Upload + Exam Config + Shuffle & Export -->
-        <aside class="space-y-5 lg:sticky lg:top-20">
+        <aside id="control-sidebar" class="space-y-5 lg:sticky lg:top-20">
           <!-- 1. Upload File Word -->
           <section id="upload-section" class="bg-white border border-slate-200 rounded-xl p-5">
             <div class="flex items-center justify-between gap-2 mb-3">
@@ -538,7 +543,7 @@
             </div>
           </div>
 
-          <div id="question-workspace" class="grid min-h-0 grid-cols-1 xl:grid-cols-[minmax(0,1.05fr)_minmax(360px,0.95fr)]">
+          <div id="question-workspace" class="grid min-h-0 grid-cols-1">
             <div class="min-w-0">
           <!-- Empty State -->
           <div id="empty-state" class="flex-1 flex flex-col items-center justify-center p-10 text-center">
@@ -634,14 +639,59 @@
           <div id="questions-list" class="hidden max-h-[calc(100vh-360px)] overflow-y-auto divide-y divide-slate-200"></div>
             </div>
 
-            <aside id="question-edit-pane" class="hidden min-w-0 border-t border-slate-200 bg-slate-50/70 xl:border-l xl:border-t-0">
-              <div id="question-edit-content" class="max-h-[calc(100vh-360px)] min-h-[420px] overflow-y-auto p-3">
-                <div class="flex min-h-[390px] flex-col items-center justify-center rounded-lg border border-dashed border-slate-300 bg-white p-8 text-center">
-                  <i data-lucide="mouse-pointer-2" class="mb-3 h-6 w-6 text-slate-400"></i>
-                  <h2 class="text-sm font-semibold text-slate-800">Chọn câu hỏi để chỉnh sửa</h2>
-                  <p class="mt-1.5 max-w-xs text-xs leading-relaxed text-slate-500">
-                    Chọn “Sửa nội dung” trên câu hỏi bên trái. Các thay đổi sẽ cập nhật ngay vào phần xem trước.
-                  </p>
+            <aside id="source-editor-pane" class="hidden min-w-0 border-t border-slate-200 bg-white xl:border-l xl:border-t-0">
+              <div class="flex h-[calc(100vh-230px)] min-h-[520px] flex-col overflow-hidden">
+                <div class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3">
+                  <div class="min-w-0">
+                    <h2 class="text-sm font-semibold text-slate-900">Chỉnh sửa toàn bộ đề</h2>
+                    <p class="mt-0.5 text-[11px] text-slate-500">Chỉnh sửa nội dung như văn bản; danh sách câu hỏi tự cập nhật.</p>
+                  </div>
+                  <div class="flex shrink-0 items-center gap-2">
+                    <button id="btn-source-load-file" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-[11px] font-medium text-slate-700 hover:bg-slate-50">
+                      <i data-lucide="upload" class="h-3.5 w-3.5"></i>
+                      Tải đề khác
+                    </button>
+                    <button id="btn-source-export-zip" type="button" class="inline-flex items-center gap-1.5 rounded-md bg-sky-700 px-2.5 py-1.5 text-[11px] font-semibold text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50">
+                      <i data-lucide="shuffle" class="h-3.5 w-3.5"></i>
+                      Trộn & tải
+                    </button>
+                  </div>
+                </div>
+                <div class="flex h-10 shrink-0 items-center justify-between border-b border-slate-200 bg-slate-50 px-4">
+                  <div class="flex items-center gap-2 text-[11px] text-slate-600">
+                    <i data-lucide="file-text" class="h-3.5 w-3.5 text-sky-700"></i>
+                    <span id="source-file-name">Đề gốc · văn bản</span>
+                    <span class="text-slate-300">|</span>
+                    <span id="source-editor-count">0 câu</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button
+                      type="button"
+                      data-action="add-new-question"
+                      data-type="mcq"
+                      class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[11px] font-medium text-sky-700 hover:bg-sky-50"
+                    >
+                      <i data-lucide="plus" class="h-3 w-3"></i>
+                      Chèn câu hỏi
+                    </button>
+                    <button id="btn-source-clear" type="button" class="rounded-md px-2 py-1 text-[11px] font-medium text-rose-600 hover:bg-rose-50">
+                      Đóng đề
+                    </button>
+                  </div>
+                </div>
+                <div class="flex min-h-0 flex-1 overflow-hidden">
+                  <div id="source-line-numbers" aria-hidden="true" class="w-12 shrink-0 overflow-hidden border-r border-slate-100 bg-slate-50 py-3 pr-2 text-right font-mono text-[11px] leading-[1.85] text-slate-400 select-none"></div>
+                  <textarea
+                    id="source-editor"
+                    aria-label="Toàn bộ nội dung đề gốc"
+                    spellcheck="false"
+                    wrap="soft"
+                    class="h-full min-w-0 flex-1 resize-none whitespace-pre-wrap break-words border-0 bg-white px-4 py-3 font-mono text-[12px] leading-[1.85] text-slate-800 outline-none focus:ring-0"
+                  ></textarea>
+                </div>
+                <div class="flex shrink-0 flex-wrap items-center justify-between gap-2 border-t border-slate-200 bg-slate-50 px-4 py-2 text-[10px] text-slate-500">
+                  <span><strong class="font-mono text-rose-600">*A.</strong> Đáp án đúng · <strong class="font-mono">[CD]</strong> Cố định · <strong class="font-mono">[KDD]</strong> Giữ thứ tự</span>
+                  <span id="source-editor-status">Sửa ở đây để cập nhật danh sách bên trái</span>
                 </div>
               </div>
             </aside>
@@ -1058,20 +1108,30 @@ A. ...   B. ...   C. ...   D. ...
 
         const state = {
           fileName: '',
+          editorActive: false,
           questions: [],     // Array of Question objects ({ type: 'mcq'|'tf'|'short', ... })
           groups: {},        // Map<groupId, { id, introParagraphs }>
           sectionTab: 'all', // 'all' | 'mcq' | 'tf' | 'short'
           onlyErrors: false,
           isExporting: false,
-          editingId: null,   // Currently edited question id
-          editDraft: null,   // Deep clone draft while editing
-          editOriginal: null,
+          editingId: null,   // Question currently selected in the source editor
           pendingDeleteId: null,
           codeMode: 'auto',  // 'auto' | 'custom'
         };
 
         // DOM References
         const el = {
+          workspaceGrid: document.getElementById('workspace-grid'),
+          controlSidebar: document.getElementById('control-sidebar'),
+          sourceEditorPane: document.getElementById('source-editor-pane'),
+          sourceEditor: document.getElementById('source-editor'),
+          sourceLineNumbers: document.getElementById('source-line-numbers'),
+          sourceEditorCount: document.getElementById('source-editor-count'),
+          sourceEditorStatus: document.getElementById('source-editor-status'),
+          sourceFileName: document.getElementById('source-file-name'),
+          btnSourceLoadFile: document.getElementById('btn-source-load-file'),
+          btnSourceExportZip: document.getElementById('btn-source-export-zip'),
+          btnSourceClear: document.getElementById('btn-source-clear'),
           dropzone: document.getElementById('dropzone'),
           fileInput: document.getElementById('file-input'),
           fileInfoBar: document.getElementById('file-info-bar'),
@@ -1123,8 +1183,6 @@ A. ...   B. ...   C. ...   D. ...
           filteredEmptyAddWrap: document.getElementById('filtered-empty-add-wrap'),
           questionWorkspace: document.getElementById('question-workspace'),
           questionsList: document.getElementById('questions-list'),
-          questionEditPane: document.getElementById('question-edit-pane'),
-          questionEditContent: document.getElementById('question-edit-content'),
           confirmDeleteModal: document.getElementById('confirm-delete-modal'),
           confirmDeleteDesc: document.getElementById('confirm-delete-desc'),
           btnCancelDelete: document.getElementById('btn-cancel-delete'),
@@ -3165,8 +3223,7 @@ A. ...   B. ...   C. ...   D. ...
           state.sectionTab = 'all';
           state.onlyErrors = false;
           state.editingId = null;
-          state.editDraft = null;
-          state.editOriginal = null;
+          state.editorActive = true;
           state.pendingDeleteId = null;
 
           renderAll();
@@ -4353,45 +4410,6 @@ A. ...   B. ...   C. ...   D. ...
           ta.style.height = Math.max(64, ta.scrollHeight) + 'px';
         }
 
-        function commitEditDraft() {
-          if (!state.editingId || !state.editDraft) return false;
-          const idx = state.questions.findIndex((q) => q.id === state.editingId);
-          if (idx === -1) {
-            state.editingId = null;
-            state.editDraft = null;
-            state.editOriginal = null;
-            return false;
-          }
-          const committed = cloneQuestion(state.editDraft);
-          committed.stem = (committed.stem || '').trim();
-          if (committed.type === 'mcq') {
-            committed.options = ensureFourOptions(committed.options).map((o) => ({
-              ...o,
-              text: (o.text || '').trim(),
-            }));
-          } else if (committed.type === 'tf') {
-            committed.statements = ensureFourStatements(committed.statements).map((s) => ({
-              ...s,
-              text: (s.text || '').trim(),
-            }));
-          } else if (committed.type === 'short' || committed.type === 'essay') {
-            committed.shortAnswer = (committed.shortAnswer || '').trim();
-          }
-          state.questions[idx] = committed;
-          state.editingId = null;
-          state.editDraft = null;
-          state.editOriginal = null;
-          return true;
-        }
-
-        function syncEditDraftToPreview() {
-          if (!state.editingId || !state.editDraft) return;
-          const idx = state.questions.findIndex((q) => q.id === state.editingId);
-          if (idx === -1) return;
-          state.questions[idx] = { ...state.editDraft };
-          renderQuestions({ preserveEditor: true });
-        }
-
         async function buildEditedSourceDocxBlob(questions, groups) {
           if (!window.docx) {
             throw new Error('Thư viện docx chưa được tải.');
@@ -4579,10 +4597,7 @@ A. ...   B. ...   C. ...   D. ...
         }
 
         async function handleExportEditedSourceDocx() {
-          if (state.editingId) {
-            commitEditDraft();
-            renderAll();
-          }
+          flushSourceEditorInput();
           if (state.questions.length === 0) {
             showAlert('warning', 'Chưa có câu hỏi', 'Hãy thêm hoặc tải lên ít nhất 1 câu hỏi trước khi xuất file đề gốc.');
             return;
@@ -4606,10 +4621,7 @@ A. ...   B. ...   C. ...   D. ...
 
         async function handleExportZip() {
           if (state.isExporting) return;
-          if (state.editingId) {
-            commitEditDraft();
-            renderAll();
-          }
+          flushSourceEditorInput();
           if (state.questions.length === 0) {
             showAlert('warning', 'Chưa có câu hỏi', 'Vui lòng tải lên file Word (.docx) đề gốc hoặc thêm câu hỏi trước khi trộn đề.');
             return;
@@ -4709,10 +4721,223 @@ A. ...   B. ...   C. ...   D. ...
         // =========================================================================
         // 7. INTERACTIVE PREVIEW & INLINE CARD EDITOR RENDERING
         // =========================================================================
-        function renderAll() {
+        function serializeExamSource() {
+          const lines = [
+            el.cfgDepartment.value.trim(),
+            el.cfgSchool.value.trim(),
+            el.cfgExamName.value.trim(),
+            `Môn: ${el.cfgSubject.value.trim()}   |   Thời gian: ${el.cfgDuration.value.trim()}`,
+            '',
+          ];
+          const sections = ['mcq', 'tf', 'short', 'essay'];
+
+          sections.forEach((sectionKey) => {
+            const questions = state.questions.filter((q) => q.type === sectionKey);
+            lines.push(SECTION_META[sectionKey].title);
+            if (questions.length > 0) {
+              lines.push(SECTION_META[sectionKey].instruction.replaceAll('{start}', '1').replaceAll('{end}', String(questions.length)));
+            }
+
+            let currentGroupId = null;
+            questions.forEach((question, questionIndex) => {
+              if (question.groupId !== currentGroupId) {
+                if (currentGroupId) lines.push('[/Nhom]', '');
+                currentGroupId = question.groupId || null;
+                if (currentGroupId) {
+                  lines.push('[Nhom]');
+                  const group = state.groups[currentGroupId];
+                  (group?.introParagraphs || []).forEach((paragraph) => {
+                    if (paragraph.text) lines.push(paragraph.text);
+                    if (paragraph.images?.length) lines.push(`[[ẢNH-ĐOẠN:${paragraph.images.length}]]`);
+                  });
+                }
+              }
+
+              const number = question.originalNumber || questionIndex + 1;
+              const controlTags = [
+                question.fixedPosition ? '[CD]' : '',
+                question.fixedOptions ? '[KDD]' : '',
+              ].filter(Boolean);
+              const stem = [question.stem.trim(), ...controlTags].filter(Boolean).join(' ');
+              lines.push(`Câu ${number}: ${stem}`);
+              if (question.stemImages?.length) lines.push(`[[ẢNH-CÂU:${question.stemImages.length}]]`);
+
+              if (sectionKey === 'mcq') {
+                const options = question.options || [];
+                for (let index = 0; index < Math.max(4, options.length); index++) {
+                  const option = options[index];
+                  const marker = question.correctIndex === index ? '*' : '';
+                  lines.push(`${marker}${LETTERS_UPPER[index] || String.fromCharCode(65 + index)}. ${option?.text || ''}`);
+                  if (option?.images?.length) lines.push(`[[ẢNH-${LETTERS_UPPER[index]}:${option.images.length}]]`);
+                }
+              } else if (sectionKey === 'tf') {
+                const statements = question.statements || [];
+                for (let index = 0; index < Math.max(4, statements.length); index++) {
+                  const statement = statements[index];
+                  const letter = LETTERS_LOWER[index] || String.fromCharCode(97 + index);
+                  lines.push(`${letter}) ${statement?.text || ''} [${statement?.isTrue ? 'Đ' : 'S'}]`);
+                  if (statement?.images?.length) lines.push(`[[ẢNH-Ý-${letter}:${statement.images.length}]]`);
+                }
+              } else if (question.shortAnswer) {
+                lines.push(`[DA: ${question.shortAnswer}]`);
+              }
+              lines.push('');
+            });
+
+            if (currentGroupId) lines.push('[/Nhom]', '');
+          });
+
+          lines.push('- HẾT -');
+          return lines.join('\n').replace(/\n{3,}/g, '\n\n');
+        }
+
+        function stripSourceImageMarkers(text) {
+          return String(text || '').replace(/\[\[ẢNH-[^\]]+\]\]/gi, '').trim();
+        }
+
+        function updateSourceLineNumbers() {
+          const lines = el.sourceEditor.value.split('\n');
+          const lineCount = Math.max(1, lines.length);
+          const charsPerLine = Math.max(20, Math.floor((el.sourceEditor.clientWidth - 32) / 7.2));
+          el.sourceLineNumbers.innerHTML = Array.from({ length: lineCount }, (_, index) => {
+            const visualLines = Math.max(1, Math.ceil((lines[index] || '').length / charsPerLine));
+            return `<div style="height:${visualLines * 22}px;line-height:22px">${index + 1}</div>`;
+          }).join('');
+          el.sourceEditorCount.textContent = `${state.questions.length} câu · ${lineCount} dòng`;
+          el.sourceLineNumbers.scrollTop = el.sourceEditor.scrollTop;
+        }
+
+        function syncSourceEditorFromQuestions() {
+          const content = state.editorActive || state.fileName || state.questions.length > 0
+            ? serializeExamSource()
+            : '';
+          if (el.sourceEditor.value !== content) el.sourceEditor.value = content;
+          updateSourceLineNumbers();
+          el.sourceEditorStatus.textContent = 'Đã đồng bộ từ danh sách câu hỏi';
+        }
+
+        function reconcileQuestionsFromSource(parsed) {
+          const oldQuestions = state.questions;
+          const matched = new Set();
+          const questions = parsed.questions.map((question) => {
+            const oldQuestion = oldQuestions.find((candidate) =>
+              !matched.has(candidate) &&
+              candidate.type === question.type &&
+              candidate.originalNumber === question.originalNumber
+            );
+            if (!oldQuestion) return question;
+
+            matched.add(oldQuestion);
+            question.id = oldQuestion.id;
+            question.stem = stripSourceImageMarkers(question.stem);
+            question.stemImages = oldQuestion.stemImages || [];
+            question.options = question.options.map((option, index) => ({
+              ...option,
+              text: stripSourceImageMarkers(option.text),
+              images: oldQuestion.options?.[index]?.images || [],
+            }));
+            question.statements = question.statements.map((statement, index) => ({
+              ...statement,
+              text: stripSourceImageMarkers(statement.text),
+              images: oldQuestion.statements?.[index]?.images || [],
+            }));
+            return question;
+          });
+
+          Object.entries(parsed.groups).forEach(([groupId, group]) => {
+            const oldGroup = state.groups[groupId];
+            group.introParagraphs = group.introParagraphs.map((paragraph, index) => ({
+              ...paragraph,
+              text: stripSourceImageMarkers(paragraph.text),
+              images: oldGroup?.introParagraphs?.[index]?.images || [],
+            }));
+          });
+
+          return { questions, groups: parsed.groups };
+        }
+
+        function updateExamConfigFromSource(source) {
+          const lines = source.split(/\r?\n/);
+          if (lines[0]) el.cfgDepartment.value = lines[0].trim();
+          if (lines[1]) el.cfgSchool.value = lines[1].trim();
+          if (lines[2]) el.cfgExamName.value = lines[2].trim();
+          const examDetails = lines.find((line) => /^\s*Môn\s*:/i.test(line));
+          const detailsMatch = examDetails?.match(/Môn\s*:\s*(.*?)\s*\|\s*Thời gian\s*:\s*(.*)$/i);
+          if (detailsMatch) {
+            el.cfgSubject.value = detailsMatch[1].trim();
+            el.cfgDuration.value = detailsMatch[2].trim();
+          }
+        }
+
+        let sourceParseTimer = null;
+        function applySourceEditorInput() {
+          window.clearTimeout(sourceParseTimer);
+          sourceParseTimer = null;
+          try {
+            const source = el.sourceEditor.value;
+            const parsed = parseRawTextToQuestions(source);
+            const reconciled = reconcileQuestionsFromSource(parsed);
+            state.questions = reconciled.questions;
+            state.groups = reconciled.groups;
+            state.editorActive = true;
+            if (state.editingId && !state.questions.some((q) => q.id === state.editingId)) {
+              state.editingId = null;
+            }
+            updateExamConfigFromSource(source);
+            renderAll({ syncSource: false });
+            updateSourceLineNumbers();
+            el.sourceEditorStatus.textContent = 'Danh sách câu hỏi đã được cập nhật';
+          } catch (error) {
+            showAlert('error', 'Không thể cập nhật danh sách câu hỏi', error.message || 'Vui lòng kiểm tra định dạng nội dung đề.');
+            el.sourceEditorStatus.textContent = 'Có lỗi khi phân tích nội dung';
+          }
+        }
+
+        function flushSourceEditorInput() {
+          if (sourceParseTimer !== null) applySourceEditorInput();
+        }
+
+        function handleSourceEditorInput() {
+          updateSourceLineNumbers();
+          el.sourceEditorStatus.textContent = 'Đang phân tích nội dung...';
+          window.clearTimeout(sourceParseTimer);
+          sourceParseTimer = window.setTimeout(applySourceEditorInput, 120);
+        }
+
+        function focusQuestionInSource(question) {
+          const editor = el.sourceEditor;
+          const source = editor.value;
+          const sectionQuestions = state.questions.filter((q) => q.type === question.type);
+          const questionIndex = sectionQuestions.indexOf(question);
+          const sectionTitle = SECTION_META[question.type]?.title;
+          let sectionStart = sectionTitle ? source.indexOf(sectionTitle) : -1;
+          if (sectionStart < 0) sectionStart = 0;
+          const sectionEndMatch = source.slice(sectionStart + 1).match(/^PHẦN\s+(?:IV|III|II|I|4|3|2|1)\b/im);
+          const sectionEnd = sectionEndMatch ? sectionStart + 1 + sectionEndMatch.index : source.length;
+          const questionStarts = [...source.slice(sectionStart, sectionEnd).matchAll(/^Câu\s+\d+\s*[:.]/gim)];
+          const target = questionStarts[questionIndex];
+          const position = target ? sectionStart + target.index : 0;
+
+          state.editingId = question.id;
+          renderQuestions({ syncSource: false });
+          editor.focus();
+          editor.setSelectionRange(position, position);
+          const line = source.slice(0, position).split('\n').length - 1;
+          editor.scrollTop = Math.max(0, line * 22);
+        }
+
+        function renderAll(options = {}) {
           const hasQuestions = state.questions.length > 0;
+          if (hasQuestions) state.editorActive = true;
+          const showEditor = Boolean(state.editorActive || state.fileName || hasQuestions);
+          el.controlSidebar.classList.toggle('hidden', showEditor);
+          el.workspaceGrid.style.gridTemplateColumns = showEditor ? 'minmax(0, 1fr)' : '';
+          el.questionWorkspace.classList.toggle('editor-active', showEditor);
+          el.sourceEditorPane.classList.toggle('hidden', !showEditor);
           el.btnExportZip.disabled = !hasQuestions || state.isExporting;
           el.btnExportEditedSource.disabled = !hasQuestions;
+          el.btnSourceExportZip.disabled = !hasQuestions || state.isExporting;
+          el.sourceFileName.textContent = state.fileName || 'Đề tự soạn · văn bản';
 
           if (hasQuestions) {
             el.fileInfoBar.classList.remove('hidden');
@@ -4726,7 +4951,7 @@ A. ...   B. ...   C. ...   D. ...
             el.fileInfoBar.classList.add('hidden');
           }
 
-          renderQuestions();
+          renderQuestions(options);
         }
 
         function renderAddQuestionBarHtml(sectionKey) {
@@ -5039,7 +5264,8 @@ A. ...   B. ...   C. ...   D. ...
         }
 
         function renderQuestions(options = {}) {
-          const preserveEditor = options.preserveEditor === true;
+          const syncSource = options.syncSource !== false;
+          if (syncSource) syncSourceEditorFromQuestions();
           const allCount = state.questions.length;
           const mcqCount = state.questions.filter((q) => q.type === 'mcq').length;
           const tfCount = state.questions.filter((q) => q.type === 'tf').length;
@@ -5083,13 +5309,11 @@ A. ...   B. ...   C. ...   D. ...
             el.filteredEmptyState.classList.add('hidden');
             el.questionsList.classList.add('hidden');
             el.questionsList.innerHTML = '';
-            el.questionEditPane.classList.add('hidden');
-            if (!preserveEditor) el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
-            if (window.lucide) window.lucide.createIcons();
+            if (!state.editorActive && !state.fileName) el.sourceEditorPane.classList.add('hidden');
             return;
           }
 
-          el.questionEditPane.classList.remove('hidden');
+          el.sourceEditorPane.classList.remove('hidden');
           const parts = [
             `<span>Tổng: <strong class="text-slate-800">${allCount}</strong> câu</span>`,
             `<span aria-hidden="true">·</span>`,
@@ -5147,10 +5371,6 @@ A. ...   B. ...   C. ...   D. ...
                   <span>+ Thêm câu hỏi mới (${SECTION_META[targetSec].shortLabel})</span>
                 </button>
               `;
-              if (window.lucide) window.lucide.createIcons();
-            }
-            if (!preserveEditor) {
-              el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
               if (window.lucide) window.lucide.createIcons();
             }
             return;
@@ -5427,7 +5647,10 @@ A. ...   B. ...   C. ...   D. ...
                   : '';
 
               htmlChunks.push(`
-                <article class="p-5 transition-colors ${hasError ? 'bg-rose-50/30' : 'bg-white'}">
+                <article
+                  data-preview-q-id="${q.id}"
+                  class="p-5 transition-colors ${hasError ? 'bg-rose-50/30' : 'bg-white'} ${state.editingId === q.id ? 'ring-2 ring-inset ring-sky-300' : ''}"
+                >
                   <div class="flex flex-wrap items-center justify-between gap-3 mb-2.5">
                     <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500 tabular-nums">
                       <span class="text-sm font-bold text-slate-900">Câu ${partQuestionNum}</span>
@@ -5479,7 +5702,7 @@ A. ...   B. ...   C. ...   D. ...
                       class="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold text-sky-700 bg-sky-50 border border-sky-200 rounded-md hover:bg-sky-100 transition-colors whitespace-nowrap"
                     >
                       <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                      <span>Sửa nội dung</span>
+                      <span>Sửa trong đề</span>
                     </button>
                     <button
                       type="button"
@@ -5518,22 +5741,6 @@ A. ...   B. ...   C. ...   D. ...
           el.questionsList.innerHTML = htmlChunks.join('');
           if (window.lucide) window.lucide.createIcons();
 
-          if (!preserveEditor) {
-            const activeQuestion = state.questions.find((q) => q.id === state.editingId);
-            if (activeQuestion && state.editDraft) {
-              const sectionQuestions = state.questions.filter((q) => q.type === activeQuestion.type);
-              el.questionEditContent.innerHTML = renderEditCardHtml(
-                state.editDraft,
-                sectionQuestions.indexOf(activeQuestion) + 1,
-              );
-            } else {
-              el.questionEditContent.innerHTML = renderQuestionEditPlaceholder();
-            }
-            if (window.lucide) window.lucide.createIcons();
-          }
-
-          const activeTa = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
-          if (activeTa) autoResizeTextarea(activeTa);
         }
 
         // =========================================================================
@@ -5576,26 +5783,36 @@ A. ...   B. ...   C. ...   D. ...
         }
 
         function addNewQuestionToSection(type) {
-          if (state.editingId) commitEditDraft();
+          flushSourceEditorInput();
           const newQ = createBlankQuestion(type);
           state.questions.push(newQ);
+          state.editorActive = true;
           if (state.onlyErrors) state.onlyErrors = false;
           if (state.sectionTab !== 'all' && state.sectionTab !== type) {
             state.sectionTab = type;
           }
           state.editingId = newQ.id;
-          state.editDraft = cloneQuestion(newQ);
-          state.editOriginal = cloneQuestion(newQ);
           renderAll();
-
-          setTimeout(() => {
-            const ta = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
-            if (ta) {
-              ta.focus();
-              ta.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-          }, 30);
+          focusQuestionInSource(newQ);
         }
+
+        el.sourceEditor.addEventListener('input', handleSourceEditorInput);
+        el.sourceEditor.addEventListener('scroll', () => {
+          el.sourceLineNumbers.scrollTop = el.sourceEditor.scrollTop;
+        });
+        window.addEventListener('resize', updateSourceLineNumbers);
+        el.sourceEditor.addEventListener('keydown', (event) => {
+          if (event.key === 'Tab') {
+            event.preventDefault();
+            const start = el.sourceEditor.selectionStart;
+            const end = el.sourceEditor.selectionEnd;
+            el.sourceEditor.setRangeText('\t', start, end, 'end');
+            handleSourceEditorInput();
+          }
+        });
+        [el.cfgDepartment, el.cfgSchool, el.cfgExamName, el.cfgSubject, el.cfgDuration].forEach((input) => {
+          input.addEventListener('input', syncSourceEditorFromQuestions);
+        });
 
         el.dropzone.addEventListener('click', () => el.fileInput.click());
         el.dropzone.addEventListener('keydown', (e) => {
@@ -5630,9 +5847,8 @@ A. ...   B. ...   C. ...   D. ...
           state.groups = {};
           state.sectionTab = 'all';
           state.onlyErrors = false;
+          state.editorActive = false;
           state.editingId = null;
-          state.editDraft = null;
-          state.editOriginal = null;
           state.pendingDeleteId = null;
           hideAlert();
           renderAll();
@@ -5645,23 +5861,30 @@ A. ...   B. ...   C. ...   D. ...
         el.btnLoadSampleDirect.addEventListener('click', handleLoadSampleDirectly);
         el.btnEmptyLoadSample.addEventListener('click', handleLoadSampleDirectly);
         el.btnExportEditedSource.addEventListener('click', handleExportEditedSourceDocx);
+        el.btnSourceLoadFile.addEventListener('click', () => el.fileInput.click());
+        el.btnSourceExportZip.addEventListener('click', () => el.btnExportZip.click());
+        el.btnSourceClear.addEventListener('click', () => {
+          window.clearTimeout(sourceParseTimer);
+          sourceParseTimer = null;
+          el.btnClearFile.click();
+        });
 
         // Section Tabs & Error filter
         document.querySelectorAll('.section-tab').forEach((btn) => {
           btn.addEventListener('click', () => {
-            if (state.editingId) commitEditDraft();
+            flushSourceEditorInput();
             state.sectionTab = btn.getAttribute('data-section-tab') || 'all';
             renderQuestions();
           });
         });
 
         el.statusAll.addEventListener('click', () => {
-          if (state.editingId) commitEditDraft();
+          flushSourceEditorInput();
           state.onlyErrors = false;
           renderQuestions();
         });
         el.statusErrors.addEventListener('click', () => {
-          if (state.editingId) commitEditDraft();
+          flushSourceEditorInput();
           state.onlyErrors = true;
           renderQuestions();
         });
@@ -5690,8 +5913,6 @@ A. ...   B. ...   C. ...   D. ...
           if (state.pendingDeleteId) {
             if (state.editingId === state.pendingDeleteId) {
               state.editingId = null;
-              state.editDraft = null;
-              state.editOriginal = null;
             }
             state.questions = state.questions.filter((q) => q.id !== state.pendingDeleteId);
             closeDeleteModal();
@@ -5700,8 +5921,15 @@ A. ...   B. ...   C. ...   D. ...
           }
         });
 
+        function getQuestionIndexForAction(target) {
+          const card = target.closest('article[data-preview-q-id]');
+          if (card) return state.questions.findIndex((q) => q.id === card.getAttribute('data-preview-q-id'));
+          return parseInt(target.getAttribute('data-q-index'), 10);
+        }
+
         // Interactive Question Editing & CRUD via Event Delegation
         el.questionWorkspace.addEventListener('click', (e) => {
+          if (sourceParseTimer !== null) flushSourceEditorInput();
           const actionBtn = e.target.closest('button[data-action]');
           if (!actionBtn) return;
           const action = actionBtn.getAttribute('data-action');
@@ -5713,69 +5941,14 @@ A. ...   B. ...   C. ...   D. ...
 
           if (action === 'start-edit') {
             const qId = actionBtn.getAttribute('data-q-id');
-            if (state.editingId && state.editingId !== qId) commitEditDraft();
             const target = state.questions.find((q) => q.id === qId);
             if (!target) return;
-            state.editingId = qId;
-            state.editDraft = cloneQuestion(target);
-            state.editOriginal = cloneQuestion(target);
-            renderQuestions();
-            setTimeout(() => {
-              const ta = el.questionEditContent.querySelector('textarea[data-action="draft-stem"]');
-              if (ta) {
-                autoResizeTextarea(ta);
-                ta.focus();
-              }
-            }, 20);
-            return;
-          }
-
-          if (action === 'cancel-edit') {
-            const originalIndex = state.questions.findIndex((q) => q.id === state.editingId);
-            if (originalIndex !== -1 && state.editOriginal) {
-              state.questions[originalIndex] = cloneQuestion(state.editOriginal);
-            }
-            state.editingId = null;
-            state.editDraft = null;
-            state.editOriginal = null;
-            renderQuestions();
-            return;
-          }
-
-          if (action === 'save-edit') {
-            commitEditDraft();
-            renderAll();
-            return;
-          }
-
-          if (action === 'draft-remove-image') {
-            if (!state.editDraft) return;
-            const imgIdx = parseInt(actionBtn.getAttribute('data-img-index'), 10);
-            if (!Number.isNaN(imgIdx) && state.editDraft.stemImages) {
-              state.editDraft.stemImages.splice(imgIdx, 1);
-              syncEditDraftToPreview();
-              renderQuestions();
-            }
-            return;
-          }
-
-          if (action === 'draft-tf-toggle') {
-            if (!state.editDraft) return;
-            const sIdx = parseInt(actionBtn.getAttribute('data-s-index'), 10);
-            const val = actionBtn.getAttribute('data-val') === 'true';
-            state.editDraft.statements = ensureFourStatements(state.editDraft.statements);
-            if (state.editDraft.statements[sIdx]) {
-              state.editDraft.statements[sIdx].isTrue = val;
-              state.editDraft.statements[sIdx].detectedBy = 'manual';
-              syncEditDraftToPreview();
-              renderQuestions();
-            }
+            focusQuestionInSource(target);
             return;
           }
 
           if (action === 'duplicate-question') {
-            if (state.editingId) commitEditDraft();
-            const qIdx = parseInt(actionBtn.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(actionBtn);
             const src = state.questions[qIdx];
             if (!src) return;
             const dup = cloneQuestion(src, makeUid());
@@ -5793,7 +5966,7 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           if (action === 'select-answer') {
-            const qIdx = parseInt(actionBtn.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(actionBtn);
             const oIdx = parseInt(actionBtn.getAttribute('data-o-index'), 10);
             if (!Number.isNaN(qIdx) && !Number.isNaN(oIdx) && state.questions[qIdx]) {
               state.questions[qIdx].correctIndex = oIdx;
@@ -5804,7 +5977,7 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           if (action === 'set-tf') {
-            const qIdx = parseInt(actionBtn.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(actionBtn);
             const sIdx = parseInt(actionBtn.getAttribute('data-s-index'), 10);
             const val = actionBtn.getAttribute('data-val') === 'true';
             if (
@@ -5821,37 +5994,12 @@ A. ...   B. ...   C. ...   D. ...
         });
 
         el.questionWorkspace.addEventListener('input', (e) => {
+          if (sourceParseTimer !== null) flushSourceEditorInput();
           const target = e.target;
           const action = target.getAttribute('data-action');
 
-          if (action === 'draft-stem' && state.editDraft) {
-            state.editDraft.stem = target.value;
-            autoResizeTextarea(target);
-            syncEditDraftToPreview();
-            return;
-          }
-          if (action === 'draft-mcq-text' && state.editDraft) {
-            const oIdx = parseInt(target.getAttribute('data-o-index'), 10);
-            state.editDraft.options = ensureFourOptions(state.editDraft.options);
-            if (state.editDraft.options[oIdx]) state.editDraft.options[oIdx].text = target.value;
-            syncEditDraftToPreview();
-            return;
-          }
-          if (action === 'draft-tf-text' && state.editDraft) {
-            const sIdx = parseInt(target.getAttribute('data-s-index'), 10);
-            state.editDraft.statements = ensureFourStatements(state.editDraft.statements);
-            if (state.editDraft.statements[sIdx]) state.editDraft.statements[sIdx].text = target.value;
-            syncEditDraftToPreview();
-            return;
-          }
-          if (action === 'draft-short-answer' && state.editDraft) {
-            state.editDraft.shortAnswer = target.value;
-            syncEditDraftToPreview();
-            return;
-          }
-
           if (action === 'edit-short-answer') {
-            const qIdx = parseInt(target.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(target);
             if (!Number.isNaN(qIdx) && state.questions[qIdx]) {
               state.questions[qIdx].shortAnswer = target.value;
               const errCount = state.questions.filter((q) => getQuestionErrors(q).length > 0).length;
@@ -5860,56 +6008,13 @@ A. ...   B. ...   C. ...   D. ...
           }
         });
 
-        el.questionWorkspace.addEventListener('change', async (e) => {
+        el.questionWorkspace.addEventListener('change', (e) => {
+          if (sourceParseTimer !== null) flushSourceEditorInput();
           const target = e.target;
           const action = target.getAttribute('data-action');
 
-          // Upload images inside Edit Mode
-          if (action === 'draft-upload-image' && state.editDraft) {
-            const files = Array.from(target.files || []);
-            for (const f of files) {
-              if (!f.type.startsWith('image/')) continue;
-              try {
-                const imgObj = await fileOrBlobToImageObj(f);
-                state.editDraft.stemImages.push(imgObj);
-              } catch (err) {
-                showAlert('error', 'Không thể thêm ảnh', err.message || 'Lỗi đọc tệp ảnh.');
-              }
-            }
-            target.value = '';
-            syncEditDraftToPreview();
-            renderQuestions();
-            return;
-          }
-
-          if (action === 'draft-mcq-correct' && state.editDraft) {
-            state.editDraft.correctIndex = parseInt(target.value, 10);
-            state.editDraft.detectedBy = 'manual';
-            syncEditDraftToPreview();
-            renderQuestions();
-            return;
-          }
-
-          if (action === 'draft-change-type' && state.editDraft) {
-            convertQuestionType(state.editDraft, target.value);
-            syncEditDraftToPreview();
-            renderQuestions();
-            return;
-          }
-
-          if (action === 'draft-toggle-cd' && state.editDraft) {
-            state.editDraft.fixedPosition = target.checked;
-            syncEditDraftToPreview();
-            return;
-          }
-          if (action === 'draft-toggle-kdd' && state.editDraft) {
-            state.editDraft.fixedOptions = target.checked;
-            syncEditDraftToPreview();
-            return;
-          }
-
           if (action === 'card-change-type') {
-            const qIdx = parseInt(target.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(target);
             if (!Number.isNaN(qIdx) && state.questions[qIdx]) {
               convertQuestionType(state.questions[qIdx], target.value);
               renderAll();
@@ -5918,7 +6023,7 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           if (action === 'edit-short-answer') {
-            const qIdx = parseInt(target.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(target);
             if (!Number.isNaN(qIdx) && state.questions[qIdx]) {
               state.questions[qIdx].shortAnswer = target.value.trim();
               renderAll();
@@ -5927,34 +6032,12 @@ A. ...   B. ...   C. ...   D. ...
           }
 
           if (target.type === 'checkbox') {
-            const qIdx = parseInt(target.getAttribute('data-q-index'), 10);
+            const qIdx = getQuestionIndexForAction(target);
             if (Number.isNaN(qIdx) || !state.questions[qIdx]) return;
             if (action === 'toggle-cd') state.questions[qIdx].fixedPosition = target.checked;
             else if (action === 'toggle-kdd') state.questions[qIdx].fixedOptions = target.checked;
             renderQuestions();
           }
-        });
-
-        // Support pasting images via Ctrl+V while inside Edit Mode
-        el.questionEditContent.addEventListener('paste', async (e) => {
-          if (!state.editingId || !state.editDraft) return;
-          const items = e.clipboardData && e.clipboardData.items ? Array.from(e.clipboardData.items) : [];
-          const imageItems = items.filter((it) => it.type && it.type.startsWith('image/'));
-          if (imageItems.length === 0) return;
-
-          e.preventDefault();
-          for (const item of imageItems) {
-            const blob = item.getAsFile();
-            if (!blob) continue;
-            try {
-              const imgObj = await fileOrBlobToImageObj(blob);
-              state.editDraft.stemImages.push(imgObj);
-            } catch (err) {
-              showAlert('error', 'Không thể dán ảnh', err.message || 'Lỗi xử lý ảnh từ clipboard.');
-            }
-          }
-          syncEditDraftToPreview();
-          renderQuestions();
         });
 
         // =========================================================================
@@ -6397,7 +6480,7 @@ Câu 1: Trình bày vai trò của tường lửa (Firewall) trong bảo mật h
         }
 
         function openPasteModal(defaultTab = 'bulk', defaultType = null) {
-          if (state.editingId) commitEditDraft();
+          flushSourceEditorInput();
           if (defaultType && ['mcq', 'tf', 'short', 'essay'].includes(defaultType)) {
             pasteState.partDraft = createBlankQuestion(defaultType);
           }
