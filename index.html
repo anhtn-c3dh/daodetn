@@ -219,7 +219,7 @@
           </section>
 
           <!-- 2. Exam Information & Shuffle Config -->
-          <section id="config-section" class="bg-white border border-slate-200 rounded-xl p-5">
+          <section id="config-section" class="bg-white border border-slate-200 rounded-xl p-5 scroll-mt-24">
             <h2 class="text-base font-semibold text-slate-900 mb-4">02. Cấu hình đề thi & Trộn đề</h2>
 
             <form id="exam-config-form" class="space-y-3.5" onsubmit="return false;">
@@ -653,7 +653,7 @@
                     </button>
                     <button id="btn-source-export-zip" type="button" class="inline-flex items-center gap-1.5 rounded-md bg-sky-700 px-2.5 py-1.5 text-[11px] font-semibold text-white hover:bg-sky-800 disabled:cursor-not-allowed disabled:opacity-50">
                       <i data-lucide="shuffle" class="h-3.5 w-3.5"></i>
-                      Trộn & tải
+                      Cài đặt trộn đề
                     </button>
                   </div>
                 </div>
@@ -1132,6 +1132,7 @@ A. ...   B. ...   C. ...   D. ...
           btnSourceLoadFile: document.getElementById('btn-source-load-file'),
           btnSourceExportZip: document.getElementById('btn-source-export-zip'),
           btnSourceClear: document.getElementById('btn-source-clear'),
+          configSection: document.getElementById('config-section'),
           dropzone: document.getElementById('dropzone'),
           fileInput: document.getElementById('file-input'),
           fileInfoBar: document.getElementById('file-info-bar'),
@@ -4928,8 +4929,7 @@ A. ...   B. ...   C. ...   D. ...
 
         function renderAll(options = {}) {
           const hasQuestions = state.questions.length > 0;
-          if (hasQuestions) state.editorActive = true;
-          const showEditor = Boolean(state.editorActive || state.fileName || hasQuestions);
+          const showEditor = Boolean(state.editorActive);
           el.controlSidebar.classList.toggle('hidden', showEditor);
           el.workspaceGrid.style.gridTemplateColumns = showEditor ? 'minmax(0, 1fr)' : '';
           el.questionWorkspace.classList.toggle('editor-active', showEditor);
@@ -5862,7 +5862,16 @@ A. ...   B. ...   C. ...   D. ...
         el.btnEmptyLoadSample.addEventListener('click', handleLoadSampleDirectly);
         el.btnExportEditedSource.addEventListener('click', handleExportEditedSourceDocx);
         el.btnSourceLoadFile.addEventListener('click', () => el.fileInput.click());
-        el.btnSourceExportZip.addEventListener('click', () => el.btnExportZip.click());
+        el.btnSourceExportZip.addEventListener('click', () => {
+          flushSourceEditorInput();
+          if (state.questions.length === 0) {
+            showAlert('warning', 'Chưa có câu hỏi', 'Vui lòng hoàn thiện đề trước khi cài đặt trộn đề.');
+            return;
+          }
+          state.editorActive = false;
+          renderAll();
+          el.configSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
         el.btnSourceClear.addEventListener('click', () => {
           window.clearTimeout(sourceParseTimer);
           sourceParseTimer = null;
