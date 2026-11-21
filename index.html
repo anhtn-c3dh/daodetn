@@ -40,6 +40,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="https://unpkg.com/docx@8.5.0/build/index.umd.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -401,6 +402,30 @@
                 <i data-lucide="shuffle" class="w-4 h-4"></i>
                 <span>Trộn đề & Tải về Bo_De_Tron_2025.zip</span>
               </button>
+
+              <div class="mt-3 grid grid-cols-1 gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                  <button id="btn-download-source-no-answer" type="button" disabled class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                    <i data-lucide="file-down" class="h-3.5 w-3.5"></i>
+                    Đề gốc không đáp án
+                  </button>
+                  <button id="btn-download-source-answer" type="button" disabled class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-sky-200 bg-sky-50 px-2.5 py-2 text-xs font-semibold text-sky-700 hover:bg-sky-100 disabled:cursor-not-allowed disabled:opacity-50">
+                    <i data-lucide="file-check-2" class="h-3.5 w-3.5"></i>
+                    Đề gốc có đáp án
+                  </button>
+                </div>
+                <div class="grid grid-cols-3 gap-2">
+                  <button id="btn-download-answer-docx" type="button" disabled class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                    Đáp án .docx
+                  </button>
+                  <button id="btn-download-answer-csv" type="button" disabled class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-slate-300 bg-white px-2 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                    Đáp án .csv
+                  </button>
+                  <button id="btn-download-answer-xlsx" type="button" disabled class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-emerald-300 bg-emerald-50 px-2 py-2 text-[11px] font-semibold text-emerald-700 hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-50">
+                    Đáp án .xlsx
+                  </button>
+                </div>
+              </div>
 
               <!-- Progress Bar -->
               <div id="export-progress-wrap" class="hidden mt-3.5">
@@ -1146,6 +1171,11 @@ A. ...   B. ...   C. ...   D. ...
           btnEmptyDownloadSample: document.getElementById('btn-empty-download-sample'),
           btnExportEditedSource: document.getElementById('btn-export-edited-source'),
           btnExportZip: document.getElementById('btn-export-zip'),
+          btnDownloadSourceNoAnswer: document.getElementById('btn-download-source-no-answer'),
+          btnDownloadSourceAnswer: document.getElementById('btn-download-source-answer'),
+          btnDownloadAnswerDocx: document.getElementById('btn-download-answer-docx'),
+          btnDownloadAnswerCsv: document.getElementById('btn-download-answer-csv'),
+          btnDownloadAnswerXlsx: document.getElementById('btn-download-answer-xlsx'),
           exportProgressWrap: document.getElementById('export-progress-wrap'),
           exportProgressLabel: document.getElementById('export-progress-label'),
           exportProgressPct: document.getElementById('export-progress-pct'),
@@ -4411,7 +4441,7 @@ A. ...   B. ...   C. ...   D. ...
           ta.style.height = Math.max(64, ta.scrollHeight) + 'px';
         }
 
-        async function buildEditedSourceDocxBlob(questions, groups) {
+        async function buildEditedSourceDocxBlob(questions, groups, includeAnswers = true) {
           if (!window.docx) {
             throw new Error('Thư viện docx chưa được tải.');
           }
@@ -4517,7 +4547,7 @@ A. ...   B. ...   C. ...   D. ...
               if (q.type === 'mcq') {
                 (q.options || []).forEach((opt, oIdx) => {
                   const letter = LETTERS_UPPER[oIdx] || String.fromCharCode(65 + oIdx);
-                  const isCorrect = q.correctIndex === oIdx;
+                  const isCorrect = includeAnswers && q.correctIndex === oIdx;
                   const runStyle = isCorrect ? { underline: { type: UnderlineType.SINGLE }, bold: true } : {};
                   children.push(
                     new Paragraph({
@@ -4540,7 +4570,7 @@ A. ...   B. ...   C. ...   D. ...
               } else if (q.type === 'tf') {
                 (q.statements || []).forEach((st, sIdx) => {
                   const letter = LETTERS_LOWER[sIdx] || String.fromCharCode(97 + sIdx);
-                  const isTrue = Boolean(st.isTrue);
+                  const isTrue = includeAnswers && Boolean(st.isTrue);
                   const runStyle = isTrue ? { underline: { type: UnderlineType.SINGLE }, bold: true } : {};
                   children.push(
                     new Paragraph({
@@ -4560,7 +4590,7 @@ A. ...   B. ...   C. ...   D. ...
                     );
                   }
                 });
-              } else if (q.type === 'short') {
+              } else if (includeAnswers && q.type === 'short') {
                 children.push(
                   new Paragraph({
                     children: [
@@ -4568,7 +4598,7 @@ A. ...   B. ...   C. ...   D. ...
                     ],
                   })
                 );
-              } else if (q.type === 'essay' && q.shortAnswer) {
+              } else if (includeAnswers && q.type === 'essay' && q.shortAnswer) {
                 children.push(
                   new Paragraph({
                     children: [
@@ -4617,6 +4647,121 @@ A. ...   B. ...   C. ...   D. ...
           } catch (err) {
             console.error(err);
             showAlert('error', 'Không thể xuất file đề gốc', err.message || 'Đã xảy ra lỗi khi tạo file .docx.');
+          }
+        }
+
+        function getExportConfig() {
+          return {
+            department: el.cfgDepartment.value.trim(),
+            school: el.cfgSchool.value.trim(),
+            examName: el.cfgExamName.value.trim(),
+            subject: el.cfgSubject.value.trim(),
+            duration: el.cfgDuration.value.trim(),
+            numberingMode: el.cfgNumberingMode.value,
+            shuffleInGroup: el.cfgShuffleInGroup.checked,
+          };
+        }
+
+        async function buildConfiguredVariants() {
+          const codes = generateExamCodes();
+          if (codes.length === 0) {
+            throw new Error('Vui lòng nhập ít nhất 1 mã đề hợp lệ trước khi tải đáp án.');
+          }
+          const config = getExportConfig();
+          return {
+            codes,
+            config,
+            variants: codes.map((code) => ({
+              code,
+              sections: createSectionAwareVariant(state.questions, config),
+            })),
+          };
+        }
+
+        async function handleDownloadSourceNoAnswer() {
+          flushSourceEditorInput();
+          if (state.questions.length === 0) return;
+          try {
+            const blob = await buildEditedSourceDocxBlob(state.questions, state.groups, false);
+            const baseName = state.fileName ? state.fileName.replace(/\.docx$/i, '') : 'De_Goc';
+            window.saveAs(blob, `${baseName}_Khong_Dap_An.docx`);
+          } catch (err) {
+            showAlert('error', 'Không thể tải đề gốc', err.message || 'Đã xảy ra lỗi.');
+          }
+        }
+
+        async function handleDownloadSourceAnswer() {
+          await handleExportEditedSourceDocx();
+        }
+
+        async function handleDownloadAnswerDocx() {
+          flushSourceEditorInput();
+          if (state.questions.length === 0) return;
+          try {
+            const { variants, config } = await buildConfiguredVariants();
+            const blob = await buildAnswerKeyDocxBlob(variants, config);
+            window.saveAs(blob, 'Bang_Dap_An_Tong_Hop.docx');
+          } catch (err) {
+            showAlert('warning', 'Không thể tải đáp án', err.message || 'Đã xảy ra lỗi.');
+          }
+        }
+
+        async function handleDownloadAnswerCsv() {
+          flushSourceEditorInput();
+          if (state.questions.length === 0) return;
+          try {
+            const { variants } = await buildConfiguredVariants();
+            window.saveAs(new Blob([buildAnswerKeyCsv(variants)], { type: 'text/csv;charset=utf-8' }), 'Bang_Dap_An.csv');
+          } catch (err) {
+            showAlert('warning', 'Không thể tải đáp án', err.message || 'Đã xảy ra lỗi.');
+          }
+        }
+
+        function buildAnswerKeyXlsxBlob(variants) {
+          if (!window.XLSX) throw new Error('Thư viện XLSX chưa được tải.');
+          const rows = [['Câu', ...variants.map((v) => `Mã ${v.code}`)]];
+          const appendSection = (sectionKey, title) => {
+            if (variants[0].sections[sectionKey].length === 0) return;
+            rows.push([title]);
+            rows[rows.length - 1].push(...[]);
+            for (let i = 0; i < variants[0].sections[sectionKey].length; i++) {
+              const displayNum = variants[0].sections[sectionKey][i].exportNumber;
+              const row = [`Câu ${displayNum}`];
+              for (const v of variants) {
+                const q = v.sections[sectionKey][i];
+                if (sectionKey === 'mcq') {
+                  row.push(q && q.correctIndex !== null ? LETTERS_UPPER[q.correctIndex] : '');
+                } else if (sectionKey === 'tf') {
+                  row.push(q ? formatTrueFalseSummary(q.statements) : '');
+                } else {
+                  row.push(q?.shortAnswer || '');
+                }
+              }
+              rows.push(row);
+            }
+            rows.push([]);
+          };
+          appendSection('mcq', 'PHẦN I. TRẮC NGHIỆM NHIỀU PHƯƠNG ÁN');
+          appendSection('tf', 'PHẦN II. TRẮC NGHIỆM ĐÚNG / SAI');
+          appendSection('short', 'PHẦN III. TRẢ LỜI NGẮN');
+          appendSection('essay', 'PHẦN IV. TỰ LUẬN');
+
+          const sheet = window.XLSX.utils.aoa_to_sheet(rows);
+          sheet['!cols'] = [{ wch: 12 }, ...variants.map(() => ({ wch: 24 }))];
+          const workbook = window.XLSX.utils.book_new();
+          window.XLSX.utils.book_append_sheet(workbook, sheet, 'Bảng đáp án');
+          const bytes = window.XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+          return new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+        }
+
+        async function handleDownloadAnswerXlsx() {
+          flushSourceEditorInput();
+          if (state.questions.length === 0) return;
+          try {
+            const { variants } = await buildConfiguredVariants();
+            window.saveAs(buildAnswerKeyXlsxBlob(variants), 'Bang_Dap_An.xlsx');
+          } catch (err) {
+            showAlert('warning', 'Không thể tải đáp án', err.message || 'Đã xảy ra lỗi.');
           }
         }
 
@@ -4937,6 +5082,11 @@ A. ...   B. ...   C. ...   D. ...
           el.btnExportZip.disabled = !hasQuestions || state.isExporting;
           el.btnExportEditedSource.disabled = !hasQuestions;
           el.btnSourceExportZip.disabled = !hasQuestions || state.isExporting;
+          el.btnDownloadSourceNoAnswer.disabled = !hasQuestions;
+          el.btnDownloadSourceAnswer.disabled = !hasQuestions;
+          el.btnDownloadAnswerDocx.disabled = !hasQuestions;
+          el.btnDownloadAnswerCsv.disabled = !hasQuestions;
+          el.btnDownloadAnswerXlsx.disabled = !hasQuestions;
           el.sourceFileName.textContent = state.fileName || 'Đề tự soạn · văn bản';
 
           if (hasQuestions) {
@@ -5861,6 +6011,11 @@ A. ...   B. ...   C. ...   D. ...
         el.btnLoadSampleDirect.addEventListener('click', handleLoadSampleDirectly);
         el.btnEmptyLoadSample.addEventListener('click', handleLoadSampleDirectly);
         el.btnExportEditedSource.addEventListener('click', handleExportEditedSourceDocx);
+        el.btnDownloadSourceNoAnswer.addEventListener('click', handleDownloadSourceNoAnswer);
+        el.btnDownloadSourceAnswer.addEventListener('click', handleDownloadSourceAnswer);
+        el.btnDownloadAnswerDocx.addEventListener('click', handleDownloadAnswerDocx);
+        el.btnDownloadAnswerCsv.addEventListener('click', handleDownloadAnswerCsv);
+        el.btnDownloadAnswerXlsx.addEventListener('click', handleDownloadAnswerXlsx);
         el.btnSourceLoadFile.addEventListener('click', () => el.fileInput.click());
         el.btnSourceExportZip.addEventListener('click', () => {
           flushSourceEditorInput();
@@ -6262,8 +6417,12 @@ Câu 1: Trình bày vai trò của tường lửa (Firewall) trong bảo mật h
           el.pastePartImagesWrap.innerHTML = imgs
             .map(
               (img, idx) => `
-                <div class="inline-flex flex-col items-start gap-1 p-1.5 rounded-lg border border-slate-200 bg-slate-50">
-                  <img src="${img.previewUrl}" alt="Ảnh minh họa ${idx + 1}" class="max-h-32 rounded object-contain bg-white" />
+                <div draggable="true" data-drag-image-index="${idx}" class="inline-flex cursor-grab flex-col items-start gap-1 p-1.5 rounded-lg border border-slate-200 bg-slate-50 active:cursor-grabbing">
+                  <div class="flex w-full items-center justify-between gap-2 text-[10px] text-slate-500">
+                    <span>Ảnh ${idx + 1}</span>
+                    <i data-lucide="grip-vertical" class="h-3 w-3"></i>
+                  </div>
+                  <img src="${img.previewUrl}" alt="Ảnh minh họa ${idx + 1}" class="pointer-events-none max-h-32 rounded object-contain bg-white" />
                   <button
                     type="button"
                     data-part-action="remove-image"
@@ -6774,6 +6933,34 @@ Câu 1: Trình bày vai trò của tường lửa (Firewall) trong bảo mật h
             pasteState.partDraft.stemImages.splice(idx, 1);
             renderPastePartImages();
           }
+        });
+
+        el.pastePartImagesWrap.addEventListener('dragstart', (e) => {
+          const card = e.target.closest('[data-drag-image-index]');
+          if (!card) return;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('text/plain', card.getAttribute('data-drag-image-index'));
+        });
+
+        el.pastePartImagesWrap.addEventListener('dragover', (e) => {
+          if (e.target.closest('[data-drag-image-index]')) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+          }
+        });
+
+        el.pastePartImagesWrap.addEventListener('drop', (e) => {
+          const target = e.target.closest('[data-drag-image-index]');
+          if (!target) return;
+          e.preventDefault();
+          const from = parseInt(e.dataTransfer.getData('text/plain'), 10);
+          const to = parseInt(target.getAttribute('data-drag-image-index'), 10);
+          if (Number.isNaN(from) || Number.isNaN(to) || from === to) return;
+          const imgs = pasteState.partDraft.stemImages;
+          if (!imgs || from < 0 || from >= imgs.length || to < 0 || to >= imgs.length) return;
+          const [moved] = imgs.splice(from, 1);
+          imgs.splice(to, 0, moved);
+          renderPastePartImages();
         });
 
         // Delegate events inside Answers Wrap in Tab 2
