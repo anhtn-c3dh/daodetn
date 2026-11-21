@@ -221,7 +221,13 @@
 
           <!-- 2. Exam Information & Shuffle Config -->
           <section id="config-section" class="bg-white border border-slate-200 rounded-xl p-5 scroll-mt-24">
-            <h2 class="text-base font-semibold text-slate-900 mb-4">02. Cấu hình đề thi & Trộn đề</h2>
+            <div class="flex items-center justify-between gap-3 mb-4">
+              <h2 class="text-base font-semibold text-slate-900">02. Cấu hình đề thi & Trộn đề</h2>
+              <button id="btn-back-to-editor" type="button" class="inline-flex items-center gap-1.5 rounded-md border border-slate-300 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50">
+                <i data-lucide="arrow-left" class="h-3.5 w-3.5"></i>
+                Quay lại soạn đề
+              </button>
+            </div>
 
             <form id="exam-config-form" class="space-y-3.5" onsubmit="return false;">
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1139,6 +1145,7 @@ A. ...   B. ...   C. ...   D. ...
           sectionTab: 'all', // 'all' | 'mcq' | 'tf' | 'short'
           onlyErrors: false,
           isExporting: false,
+          viewMode: 'edit',
           editingId: null,   // Question currently selected in the source editor
           pendingDeleteId: null,
           codeMode: 'auto',  // 'auto' | 'custom'
@@ -1158,6 +1165,7 @@ A. ...   B. ...   C. ...   D. ...
           btnSourceExportZip: document.getElementById('btn-source-export-zip'),
           btnSourceClear: document.getElementById('btn-source-clear'),
           configSection: document.getElementById('config-section'),
+          btnBackToEditor: document.getElementById('btn-back-to-editor'),
           dropzone: document.getElementById('dropzone'),
           fileInput: document.getElementById('file-input'),
           fileInfoBar: document.getElementById('file-info-bar'),
@@ -3255,6 +3263,7 @@ A. ...   B. ...   C. ...   D. ...
           state.onlyErrors = false;
           state.editingId = null;
           state.editorActive = true;
+          state.viewMode = 'edit';
           state.pendingDeleteId = null;
 
           renderAll();
@@ -5074,11 +5083,18 @@ A. ...   B. ...   C. ...   D. ...
 
         function renderAll(options = {}) {
           const hasQuestions = state.questions.length > 0;
-          const showEditor = Boolean(state.editorActive);
-          el.controlSidebar.classList.toggle('hidden', showEditor);
-          el.workspaceGrid.style.gridTemplateColumns = showEditor ? 'minmax(0, 1fr)' : '';
-          el.questionWorkspace.classList.toggle('editor-active', showEditor);
-          el.sourceEditorPane.classList.toggle('hidden', !showEditor);
+          const configMode = state.viewMode === 'config';
+          const showEditor = Boolean(state.editorActive) && !configMode;
+          el.controlSidebar.classList.toggle('hidden', configMode ? false : showEditor);
+          el.questionWorkspace.classList.toggle('hidden', configMode);
+          document.getElementById('upload-section')?.classList.toggle('hidden', configMode);
+          el.sourceEditorPane.classList.toggle('hidden', configMode || !showEditor);
+          el.workspaceGrid.style.gridTemplateColumns = configMode
+            ? 'minmax(0, 410px)'
+            : showEditor
+              ? 'minmax(0, 1fr)'
+              : '';
+          el.workspaceGrid.classList.toggle('justify-start', configMode);
           el.btnExportZip.disabled = !hasQuestions || state.isExporting;
           el.btnExportEditedSource.disabled = !hasQuestions;
           el.btnSourceExportZip.disabled = !hasQuestions || state.isExporting;
@@ -5570,11 +5586,14 @@ A. ...   B. ...   C. ...   D. ...
                 const grp = state.groups[q.groupId];
                 if (grp) {
                   const introHtml = (grp.introParagraphs || [])
-                    .map((p) => {
+                    .map((p, pIndex) => {
                       const imgsHtml = (p.images || [])
                         .map(
-                          (img) =>
-                            `<img src="${img.previewUrl}" alt="Hình minh họa đoạn đọc hiểu" class="mt-2 max-h-48 rounded border border-slate-200 object-contain" />`
+                          (img, imgIdx) =>
+                            `<div draggable="true" data-preview-drag-location="intro" data-preview-group-id="${q.groupId}" data-preview-p-index="${pIndex}" data-preview-image-index="${imgIdx}" class="mt-2 inline-flex cursor-move items-center gap-2 rounded border border-transparent p-1 hover:border-sky-300" title="Kéo để di chuyển ảnh">
+                              <i data-lucide="grip-vertical" class="h-4 w-4 shrink-0 text-slate-400"></i>
+                              <img src="${img.previewUrl}" alt="Hình minh họa đoạn đọc hiểu" class="pointer-events-none max-h-48 rounded border border-slate-200 object-contain" />
+                            </div>`
                         )
                         .join('');
                       return `${p.text ? `<p class="text-sm text-slate-700 leading-relaxed whitespace-pre-line">${escapeHtml(p.text)}</p>` : ''}${imgsHtml}`;
@@ -5598,8 +5617,11 @@ A. ...   B. ...   C. ...   D. ...
 
               const stemImagesHtml = (q.stemImages || [])
                 .map(
-                  (img) =>
-                    `<div class="mt-2.5"><img src="${img.previewUrl}" alt="Hình minh họa" class="max-h-52 rounded-lg border border-slate-200 object-contain bg-white p-1" /></div>`
+                  (img, imgIdx) =>
+                    `<div draggable="true" data-preview-drag-location="stem" data-preview-q-id="${q.id}" data-preview-image-index="${imgIdx}" class="mt-2.5 inline-flex cursor-move items-center gap-2 rounded-lg border border-transparent p-1 hover:border-sky-300" title="Kéo để di chuyển ảnh sang vị trí khác">
+                      <i data-lucide="grip-vertical" class="h-4 w-4 shrink-0 text-slate-400"></i>
+                      <img src="${img.previewUrl}" alt="Hình minh họa" class="pointer-events-none max-h-52 rounded-lg border border-slate-200 object-contain bg-white p-1" />
+                    </div>`
                 )
                 .join('');
 
@@ -5628,8 +5650,11 @@ A. ...   B. ...   C. ...   D. ...
                     const letter = LETTERS_UPPER[oIdx] || String.fromCharCode(65 + oIdx);
                     const optImgs = (opt.images || [])
                       .map(
-                        (img) =>
-                          `<img src="${img.previewUrl}" alt="Hình phương án ${letter}" class="mt-1.5 max-h-32 rounded border border-slate-200 object-contain bg-white" />`
+                        (img, imgIdx) =>
+                          `<div draggable="true" data-preview-drag-location="option" data-preview-q-id="${q.id}" data-preview-option-index="${oIdx}" data-preview-image-index="${imgIdx}" class="mt-1.5 inline-flex cursor-move items-center gap-2 rounded border border-transparent p-1 hover:border-sky-300" title="Kéo để di chuyển ảnh">
+                            <i data-lucide="grip-vertical" class="h-3.5 w-3.5 shrink-0 text-slate-400"></i>
+                            <img src="${img.previewUrl}" alt="Hình phương án ${letter}" class="pointer-events-none max-h-32 rounded border border-slate-200 object-contain bg-white" />
+                          </div>`
                       )
                       .join('');
                     const suffix = q.detectedBy && sourceLabels[q.detectedBy] ? ` (${sourceLabels[q.detectedBy]})` : '';
@@ -5678,8 +5703,11 @@ A. ...   B. ...   C. ...   D. ...
                     const letter = LETTERS_LOWER[sIdx] || String.fromCharCode(97 + sIdx);
                     const stImgs = (st.images || [])
                       .map(
-                        (img) =>
-                          `<img src="${img.previewUrl}" alt="Hình ý ${letter}" class="mt-1.5 max-h-32 rounded border border-slate-200 object-contain bg-white" />`
+                        (img, imgIdx) =>
+                          `<div draggable="true" data-preview-drag-location="statement" data-preview-q-id="${q.id}" data-preview-statement-index="${sIdx}" data-preview-image-index="${imgIdx}" class="mt-1.5 inline-flex cursor-move items-center gap-2 rounded border border-transparent p-1 hover:border-sky-300" title="Kéo để di chuyển ảnh">
+                            <i data-lucide="grip-vertical" class="h-3.5 w-3.5 shrink-0 text-slate-400"></i>
+                            <img src="${img.previewUrl}" alt="Hình ý ${letter}" class="pointer-events-none max-h-32 rounded border border-slate-200 object-contain bg-white" />
+                          </div>`
                       )
                       .join('');
                     const hint =
@@ -5998,6 +6026,7 @@ A. ...   B. ...   C. ...   D. ...
           state.sectionTab = 'all';
           state.onlyErrors = false;
           state.editorActive = false;
+          state.viewMode = 'edit';
           state.editingId = null;
           state.pendingDeleteId = null;
           hideAlert();
@@ -6023,9 +6052,15 @@ A. ...   B. ...   C. ...   D. ...
             showAlert('warning', 'Chưa có câu hỏi', 'Vui lòng hoàn thiện đề trước khi cài đặt trộn đề.');
             return;
           }
+          state.viewMode = 'config';
           state.editorActive = false;
           renderAll();
           el.configSection?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        el.btnBackToEditor.addEventListener('click', () => {
+          state.viewMode = 'edit';
+          state.editorActive = state.questions.length > 0;
+          renderAll();
         });
         el.btnSourceClear.addEventListener('click', () => {
           window.clearTimeout(sourceParseTimer);
@@ -6202,6 +6237,84 @@ A. ...   B. ...   C. ...   D. ...
             else if (action === 'toggle-kdd') state.questions[qIdx].fixedOptions = target.checked;
             renderQuestions();
           }
+        });
+
+        function previewImageLocationFromElement(card) {
+          return {
+            location: card.dataset.previewDragLocation,
+            qId: card.dataset.previewQId || null,
+            optionIndex: card.dataset.previewOptionIndex !== undefined ? parseInt(card.dataset.previewOptionIndex, 10) : null,
+            statementIndex: card.dataset.previewStatementIndex !== undefined ? parseInt(card.dataset.previewStatementIndex, 10) : null,
+            groupId: card.dataset.previewGroupId || null,
+            paragraphIndex: card.dataset.previewPIndex !== undefined ? parseInt(card.dataset.previewPIndex, 10) : null,
+            imageIndex: parseInt(card.dataset.previewImageIndex, 10),
+          };
+        }
+
+        function getPreviewImageList(location) {
+          if (location.location === 'stem') {
+            const q = state.questions.find((item) => item.id === location.qId);
+            return q?.stemImages || null;
+          }
+          if (location.location === 'option') {
+            const q = state.questions.find((item) => item.id === location.qId);
+            return q?.options?.[location.optionIndex]?.images || null;
+          }
+          if (location.location === 'statement') {
+            const q = state.questions.find((item) => item.id === location.qId);
+            return q?.statements?.[location.statementIndex]?.images || null;
+          }
+          if (location.location === 'intro') {
+            return state.groups[location.groupId]?.introParagraphs?.[location.paragraphIndex]?.images || null;
+          }
+          return null;
+        }
+
+        el.questionWorkspace.addEventListener('dragstart', (e) => {
+          const card = e.target.closest('[data-preview-drag-location]');
+          if (!card) return;
+          e.dataTransfer.effectAllowed = 'move';
+          e.dataTransfer.setData('application/x-daodetn-image', JSON.stringify(previewImageLocationFromElement(card)));
+          card.classList.add('opacity-50');
+        });
+
+        el.questionWorkspace.addEventListener('dragend', (e) => {
+          e.target.closest('[data-preview-drag-location]')?.classList.remove('opacity-50');
+        });
+
+        el.questionWorkspace.addEventListener('dragover', (e) => {
+          if (e.target.closest('[data-preview-drag-location]')) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+          }
+        });
+
+        el.questionWorkspace.addEventListener('drop', (e) => {
+          const targetCard = e.target.closest('[data-preview-drag-location]');
+          if (!targetCard) return;
+          e.preventDefault();
+          let source;
+          try {
+            source = JSON.parse(e.dataTransfer.getData('application/x-daodetn-image'));
+          } catch {
+            return;
+          }
+          const target = previewImageLocationFromElement(targetCard);
+          const sourceList = getPreviewImageList(source);
+          const targetList = getPreviewImageList(target);
+          if (!sourceList || !targetList || !sourceList[source.imageIndex]) return;
+
+          const [movedImage] = sourceList.splice(source.imageIndex, 1);
+          if (sourceList === targetList) {
+            let insertIndex = target.imageIndex;
+            if (source.imageIndex < target.imageIndex) insertIndex -= 1;
+            targetList.splice(Math.max(0, insertIndex), 0, movedImage);
+          } else {
+            targetList.splice(Math.max(0, Math.min(target.imageIndex, targetList.length)), 0, movedImage);
+          }
+          syncSourceEditorFromQuestions();
+          renderQuestions({ syncSource: false });
+          showAlert('success', 'Đã di chuyển hình ảnh', 'Vị trí ảnh mới đã được cập nhật trong đề.');
         });
 
         // =========================================================================
